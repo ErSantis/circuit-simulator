@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<script src="jquery-2.1.1.min.js"></script>
+	<style>
+		.components {
+			background: c#F7F689;
+			padding: 1px;
+			vertical-align: top;
+		}
+
+		.componentButton {
+			font-size: 10pt;
+			background: #F4E57F;
+			color: #565527;
+			border-radius: 5px 5px 5px 5px;
+			margin: 3px;
+			border: solid;
+			cursor: crosshair;
+			border-width: 2px;
+		}
+
+		.componentButton:hover {
+			background: #ffff55;
+		}
+
+		#topBar {
+			font-size: 18pt;
+			background-color: black;
+			color: #eeeeee;
+			padding: 5px;
+		}
+
+		.button {
+			background-color: #ffaa00;
+			padding: 5px;
+			margin: 3px;
+			border-radius: 5px;
+		}
+
+		.editor {
+			color: white;
+			margin: 5px;
+			position: absolute;
+			top: 20px;
+			left: 20px;
+			background-color: gray;
+			border-radius: 5px;
+			border-style: solid;
+			border-color: black;
+			border-width: 2px;
+			display: none;
+		}
+
+		td.mat {
+			background-color: #dddddd;
+		}
+
+		td.unknown {
+			background-color: #ffcccc;
+		}
+
+		td.rhs {
+			background-color: #ccccff;
+		}
+
+		html,
+		body {
+			font-family: Helvetica;
+			height: 100%;
+			margin: 0px;
+			overflow: hidden;
+		}
+
+		table.mainLay {
+			padding: 0px;
+			margin: 3px;
+			width: 100%;
+			height: 100%;
+			table-layout: auto;
+		}
+
+		canvas {
+			width: 80%;
+		}
+	</style>
+	<script src="circuit.js"></script>
+	<script src="schematicCapture.js"></script>
+</head>
+
+<body>
+	<div id="topBar">
+		<b>Ley de Ohm</b> | Expofisica
+	</div>
+	<div class="components">
+		<table style='width:100%'>
+			<tr>
+				<td>
+					<img class="componentButton" id="ground" src="icons/ground.png" width="50px">
+					<img class="componentButton" id="vSource" src="icons/voltage.png" width="50px">
+					<img class="componentButton" id="resistor" src="icons/resistor.png" width="50px">
+					<img class="componentButton" id="inductor" src="icons/inductor.png" width="50px">
+					<img class="componentButton" id="	" src="icons/capacitor.png" width="50px">
+					<img class="componentButton" id="diode" src="icons/diode.png" width="50px">
+					<img class="componentButton" id="npn" src="icons/npn.png" width="50px">
+				</td>
+				<td style='text-align:right'><span id='clear' class="button">Clear Components</span></Td>
+			</tr>
+		</table>
+	</div>
+
+	<canvas style='position:absolute' id="schematic"></canvas>
+	
+
+
+	<div style='position:absolute' id="dialog" class="editor">
+		Edit: <input id="editValue" />
+	</div>
+
+		
+
+
+	<script>
+		
+
+		function resizeWindow() {
+			$("#schematic")[0].width = window.innerWidth;
+			$("#schematic")[0].height = window.innerHeight;
+			
+			var heightOffset = $("#components").innerHeight();
+			$("#schematic").css({ top: heightOffset, width: window.innerWidth, height: window.innerHeight });
+		
+			// var kaka = 100;
+			// $("#rep").css({ top: heightOffset + 600, left: window.innerWidth - 605 });
+			//$("#rep").css({top:400});
+			//console.log("height "+window.innerWidth+ " height off "+heightOffset);	
+			//schematic.schematicCanvas.height=window.innerHeight; //-$("#topBar").height()
+			//schematic.schematicCanvas.width=window.innerWidth-300;
+
+			//cvs.height=300;
+			//cvs.width=300;
+			//schematic.schematicCanvas.width=window.innerWidth-300;
+			schematic.draw();
+		}
+
+		$(document).ready(function () {
+			schematic = new SchematicCapture();
+			resizeWindow();
+			$(".componentButton").click(function (e) {
+				var pos = $(e.currentTarget).position()
+				//console.log(pos)
+				schematic.addComponent(e.currentTarget.id, pos.left, pos.top)
+			});
+			$("#clear").click(function (e) {
+				schematic.clear();
+			});
+			window.addEventListener('resize', resizeWindow, false);
+			//schematic.draw();
+		});
+	</script>
+</body>
+
+</html>
