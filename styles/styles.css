@@ -1,0 +1,69 @@
+.components {
+    background: #7ef291;
+    padding: 1px;
+    vertical-align: top;
+}
+
+.componentButton {
+    font-size: 10pt;
+    background: #68eddf;
+    color: #68eddf;
+    border-radius: 5px 5px 5px 5px;
+    margin: 3px;
+    border: solid;
+    cursor: crosshair;
+    border-width: 2px;
+}
+
+.componentButton:hover {
+    background: #ff2a00;
+}
+
+#topBar {
+    font-size: 18pt;
+    background-color: black;
+    color: #eeeeee;
+    padding: 5px;
+}
+
+.button {
+    background-color: #00f2ff;
+    padding: 5px;
+    margin: 3px;
+    border-radius: 5px;
+}
+
+.editor {
+    color: white;
+    margin: 5px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: gray;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    display: none;
+}
+
+
+html, body {
+    font-family: Helvetica;
+    height: 100%;
+    margin: 0px;
+    overflow: hidden;
+}
+
+table {
+    padding: 0px;
+    margin: 3px;
+    width: 100%;
+    height: 100%;
+    table-layout: auto;
+}
+
+canvas {
+    position: absolute;
+    width: 80%;
+}
