@@ -19,34 +19,6 @@ Resistor.prototype.matrix=function(dt, time, system, vPrev, vOld){
 	system.addToB(this.node2,+vPrev[this.node1]*this.oneOverR-vPrev[this.node2]*this.oneOverR);
 }
 
-//------------------------------------------------------------------------------------------
-// Diode Class
-//------------------------------------------------------------------------------------------
-
-function Diode(node1,node2,D){
-	this.node1=node1
-	this.node2=node2
-	//this.oneOverR=1.0/R
-	this.n=1.5
-	this.IS=1e-12;
-	this.VT=.026
-}
-
-
-Diode.prototype.matrix=function(dt, time, system, vPrev, vOld){
-	var n1=this.node1;
-	var n2=this.node2;
-    var denomInv=1./(this.n*this.VT);
-	var value=this.IS*(Math.exp((vPrev[n1]-vPrev[n2])*denomInv)-1)
-	var deriv=this.IS*(Math.exp((vPrev[n1]-vPrev[n2])*denomInv))*denomInv;
-	system.addToMatrix(this.node1,this.node1,deriv);
-	system.addToMatrix(this.node1,this.node2,-deriv);
-	system.addToMatrix(this.node2,this.node1,-deriv);
-	system.addToMatrix(this.node2,this.node2,deriv);
-	system.addToB(this.node1,-value);
-	system.addToB(this.node2,value);
-}
-
 
 //------------------------------------------------------------------------------------------
 // Capacitor Class
@@ -76,34 +48,7 @@ Capacitor.prototype.matrix=function(dt, time, system, vPrev, vOld){
 }
 
 
-//------------------------------------------------------------------------------------------
-// Inductor Class
-//------------------------------------------------------------------------------------------
-function Inductor(node1,node2,nodeI,L){
-	this.node1=node1;
-	this.node2=node2;
-	this.nodeI=nodeI;
-	this.L=L;
-}
 
-Inductor.prototype.matrix=function(dt, time, system, vPrev, vOld){
-	// v = L di/dt
-	// v1-v2 = L di/dt
-	// v1-v2 = (i-iold) L/dt
-	// i L/dt + v2 - v1 = iold L/dt
-	var L_div_dt=this.L/dt;
-	system.addToMatrix(this.node1,this.nodeI,1);
-	system.addToB(this.node1,-vPrev[this.nodeI]);
-	system.addToMatrix(this.node2,this.nodeI,-1);
-	system.addToB(this.node2,vPrev[this.nodeI]);
-
-	system.addToMatrix(this.nodeI,this.nodeI,L_div_dt);
-	system.addToMatrix(this.nodeI,this.node1,-1);
-	system.addToMatrix(this.nodeI,this.node2,1);
-	system.addToB(this.nodeI,(vOld[this.nodeI])*0-(-vPrev[this.node1]+vPrev[this.node2]+L_div_dt*(vPrev[this.nodeI]-vOld[this.nodeI])));
-	//system.addToB(this.nodeI,-vPrev[this.node1]+vPrev[this.node2]+L_div_dt*(vPrev[this.nodeI]-vOld[this.nodeI])));
-	//system.addToB(this.nodeI,-L_div_dt*vOld[this.nodeI]);
-}
 //------------------------------------------------------------------------------------------
 // Voltage Class
 //------------------------------------------------------------------------------------------
@@ -202,12 +147,6 @@ Circuit.prototype.addC=function(name1,name2,R){
 	this.components.push(new Capacitor(n1,n2,R))
 }
 
-Circuit.prototype.addI=function(name1,name2,R){
-	var n1=this.allocNode(name1)
-	var n2=this.allocNode(name2);
-	var ni=this.allocNode("inductorCurrent"+this.num);
-		this.components.push(new Inductor(n1,n2,ni,R))
-}
 
 Circuit.prototype.addR=function(name1,name2,R){
 	var n1=this.allocNode(name1)
@@ -215,9 +154,4 @@ Circuit.prototype.addR=function(name1,name2,R){
 	this.components.push(new Resistor(n1,n2,R))
 }
 
-Circuit.prototype.addD=function(name1,name2,D){
-	var n1=this.allocNode(name1)
-	var n2=this.allocNode(name2);
-	this.components.push(new Diode(n1,n2,D))	
-}
 

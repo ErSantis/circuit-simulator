@@ -1,5 +1,5 @@
 .components {
-    background: #7ef291;
+    background: #c8fffc;
     padding: 1px;
     vertical-align: top;
 }
@@ -27,7 +27,7 @@
 }
 
 .button {
-    background-color: #00f2ff;
+    background-color: hsl(69, 90%, 84%);
     padding: 5px;
     margin: 3px;
     border-radius: 5px;

@@ -105,19 +105,6 @@ ResistorSymbol.prototype.buildNet = function (recordNet, unionNet) {
     return ["R", [n1, n2], this.value];
 }
 
-NPNTransistor = function (x, y, rotation) {
-    this.points = [[0, 0], [4.5, 0], [4.5, 2], [4.5, -2], [4.5, -.5], [8, -2.8], [8, -4], null, [4.5, .5], [8, 2.8], [8, 4], null, [7, 2.2], [6.5, .5], null, [7, 2.2], [5.5, 2.5]] //,[4.5,0],null,[5.5,0],[5.5,-2],[5.5,2],[5.5,0],[10,0]];
-    this.circles = [[6, 0, 3, 2 * Math.PI]]
-    Component.call(this, x, y, rotation)
-    this.value = ""
-}
-NPNTransistor.prototype = new Component()
-NPNTransistor.prototype.buildNet = function (recordNet, unionNet) {
-    var B = recordNet(this.objectToWorld(0, 0));
-    var C = recordNet(this.objectToWorld(8, -4));
-    var E = recordNet(this.objectToWorld(8, 4));
-    return ["NPN", [B, C, E], this.value];
-}
 
 CapSymbol = function (x, y, rotation, val) {
     this.points = [[0, 0], [4.5, 0], [4.5, -2], [4.5, 2], [4.5, 0], null, [5.5, 0], [5.5, -2], [5.5, 2], [5.5, 0], [10, 0]];
@@ -143,34 +130,6 @@ VSourceSymbol.prototype.buildNet = function (recordNet, unionNet) {
     var n2 = recordNet(this.objectToWorld(0, 6));
     return ["V", [n1, n2], this.value]
 }
-
-DiodeSymbol = function (x, y, rotation, val) {
-    this.points = [[-2, 0], [2, 0], [2, 1.5], [2, -1.5], [4, 0], [2, 1.5], [4, 0], [4, 1.5], [4, -1.5], [4, 0], [8, 0]]
-    Component.call(this, x, y, rotation)
-    this.value = val
-}
-DiodeSymbol.prototype = new Component()
-DiodeSymbol.prototype.buildNet = function (recordNet, unionNet) {
-    var n1 = recordNet(this.objectToWorld(-2, 0));
-    var n2 = recordNet(this.objectToWorld(8, 0));
-    return ["D", [n1, n2], this.value]
-}
-
-
-InductorSymbol = function (x, y, rotation, val) {
-    this.points = [[-6, 0], [-3, 0], null, [3, 0], [6, 0]]
-    this.circles = [[-2, 0, 1, Math.PI], [0, 0, 1, Math.PI], [2, 0, 1, Math.PI]]
-    Component.call(this, x, y, rotation)
-    this.value = val
-}
-InductorSymbol.prototype = new Component()
-InductorSymbol.prototype.buildNet = function (recordNet, unionNet) {
-    var n1 = recordNet(this.objectToWorld(-6, 0));
-    var n2 = recordNet(this.objectToWorld(6, 0));
-    return ["L", [n1, n2], this.value]
-}
-
-
 WireSymbol = function (x, y, x1, y1) {
     this.points = [[0, 0], [x1 - x, y1 - y]];
     Component.call(this, x, y, 0)
@@ -201,15 +160,6 @@ WireSymbol.prototype.buildNet = function (netRecord, unionNet) {
     unionNet(n0, n1);
 }
 
-GroundSymbol = function (x, y) {
-    this.points = [[0, -2], [0, 0], null, [-3, 0], [3, 0], null, [-2, 1], [2, 1], null, [-1, 2], [1, 2]]
-    Component.call(this, x, y, 0)
-}
-GroundSymbol.prototype = new Component()
-GroundSymbol.prototype.buildNet = function (netRecord, unionNet) {
-    var net = netRecord(this.objectToWorld(this.points[0][0], this.points[0][1]));
-    unionNet(net, "GND")
-}
 
 function schematicCaptureDoubleClick(event) {
     event.target.schematicCapture.doubleClick(event)
@@ -228,38 +178,18 @@ function schematicCaptureKeyDown(event) {
 }
 SchematicCapture = function () {
     this.symbols = new Array;
-    //c
-    // this.symbols.push(new ResistorSymbol(-10,20,1));
-    // this.symbols.push(new ResistorSymbol(10,20,2));
-    // this.symbols.push(new ResistorSymbol(30,20,3));
-    // this.symbols.push(new CapSymbol(30,10,0));
-    // this.symbols.push(new VSourceSymbol(00,-4,0));
-    // this.symbols.push(new WireSymbol(4,4,20,20));
-    // this.symbols.push(new GroundSymbol(4,10));
-
-    // this.symbols.push(new VSourceSymbol(0,-4,0,"square,.1,1,1"));
-    // this.symbols.push(new InductorSymbol(20,-4,1,5));
-    // this.symbols.push(new ResistorSymbol(20,12,1,1000));
-    // this.symbols.push(new WireSymbol(0,-10,20,-10));
-    // //this.symbols.push(new WireSymbol(0,2,20,2));
-    // //this.symbols.push(new WireSymbol(20,2,20,0));
-    // this.symbols.push(new GroundSymbol(0,4,20,0));
-    // this.symbols.push(new GroundSymbol(20,14,20,0));
 
     // basic diff/integrator
     this.symbols.push(new VSourceSymbol(0, -4, 0, "square,.3,0,5"));
     this.symbols.push(new ResistorSymbol(20, -10, 0, 100));
     this.symbols.push(new CapSymbol(30, -10, 0, .0001));
-    this.symbols.push(new GroundSymbol(40, -8, 20, 0));
     this.symbols.push(new WireSymbol(0, -10, 20, -10));
     this.symbols.push(new WireSymbol(0, -20, 20, -20));
     this.symbols.push(new WireSymbol(0, -20, 0, -10));
+    //this.symbols.push(new WireSymbol(20, -20, 30, -20));
     this.symbols.push(new WireSymbol(40, -20, 40, -10));
     this.symbols.push(new ResistorSymbol(30, -20, 0, 200));
-    //this.symbols.push(new CapSymbol (20,-20,0,.000001));
-    this.symbols.push(new DiodeSymbol(22, -20, 0, .000001));
-    this.symbols.push(new GroundSymbol(0, 4, 20, 0));
-
+    this.symbols.push(new CapSymbol (20,-20,0,.000001));
 
     this.schematicCanvas = document.getElementById("schematic")
     this.schematicCanvas.schematicCapture = this;
@@ -319,7 +249,7 @@ SchematicCapture.prototype.keyDown = function (event) {
             event.preventDefault();
             this.draw();
             return false;
-        } else if (event.keyCode == 82) { // r
+        } else if (event.keyCode == 82) { // rotate
             this.highlight.rotation = (this.highlight.rotation + 1) % 4
             this.highlight.updateBox();
             event.preventDefault();
@@ -417,12 +347,8 @@ SchematicCapture.prototype.addComponent = function (componentType, x, y) {
 
     switch (componentType) {
         case "resistor": newGuy = new ResistorSymbol(xWorld, yWorld, 0, 1000); break;
-        case "inductor": newGuy = new InductorSymbol(xWorld, yWorld, 0, 0.00001); break;
         case "capacitor": newGuy = new CapSymbol(xWorld, yWorld, 0, 0.001); break;
-        case "npn": newGuy = new NPNTransistor(xWorld, yWorld, 0); break;
-        case "diode": newGuy = new DiodeSymbol(xWorld, yWorld, 0); break;
         case "vSource": newGuy = new VSourceSymbol(xWorld, yWorld, 0, "square,.3,0,5"); break;
-        case "ground": newGuy = new GroundSymbol(xWorld, yWorld, 0); break;
         default: return;
     }
     this.symbols.push(newGuy)
@@ -535,11 +461,11 @@ SchematicCapture.prototype.draw = function () {
     var yToDevice = function (y) { return (y - self.ymin) / (self.ymax - self.ymin) * self.height };
     // draw grid lines
     // Color the background
-    context.fillStyle = "rgba(240, 240, 240, 0.5)";
+    context.fillStyle = "rgba(255, 255, 225, 0)";
     // Color the lines
     context.fillRect(0, 0, this.width, this.height);
     if (true) { 
-        context.strokeStyle = "rgba(0, 160, 255, .5)";
+        context.strokeStyle = "rgba(0, 232, 255, 0.5)";
         var xstart = Math.floor(this.xmin / this.dx) * this.dx;
         for (var x = xstart; x < this.xmax; x += this.dx) {
             context.moveTo(xToDevice(   x), yToDevice(this.ymin));
@@ -554,7 +480,7 @@ SchematicCapture.prototype.draw = function () {
     }
     context.stroke();
 
-    context.strokeStyle = "rgba(0,0,0, 1)";
+    context.strokeStyle = "rgba(255, 255, 255,0) ";
     context.lineWidth = 2;
     // draw symbols
     for (var v in this.symbols) {
@@ -564,7 +490,7 @@ SchematicCapture.prototype.draw = function () {
 
     // find all connection points so we can draw if connections happen
     var net = this.buildNet()
-    context.strokeStyle = "rgba(200,20,20, 1)";
+    context.strokeStyle = " )";
     for (var n in net) {
         context.beginPath()
         var data = net[n];
