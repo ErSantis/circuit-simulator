@@ -1,4 +1,3 @@
-
 // Construct a component at a given position and rotation
 Component = function (x, y, rotation) {
     this.x = x; // xlocation of origin in world space
@@ -85,7 +84,6 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight,sy
         context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
         else if(symbol.type == "V")
         context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]));
-        //context.fillText(this.value, xToDevice(pt[0]), yToDevice(pt[1]));
     }
 }
 
@@ -131,10 +129,7 @@ WireSymbol = function (x, y, x1, y1) {
 }
 WireSymbol.prototype = new Component()
 WireSymbol.prototype.inside = function (xWorld, yWorld) {
-    // v1 is vector from first point of wire to the cursor position
-    // v2 is the vector from the first point to the second wire normalized
-    // dotProduct(v1,v2) = cos(theta) |v1| |v2| = cos(theta) |v1|  must be in the interval [-threshold,v1+threhsold]
-    // crossProduct(v1,v2) = sin(theta) |v1| |v2| = sin(theta) |v1| must be within [-threhsold,|v1|+threshold]
+
     var wireInsideThreshold = 0.5
     var len = Math.sqrt(this.points[1][0] * this.points[1][0] + this.points[1][1] * this.points[1][1]);
     var invLen = 1. / len;
@@ -154,7 +149,6 @@ WireSymbol.prototype.buildNet = function (netRecord, unionNet) {
     var n1 = netRecord(this.objectToWorld(this.points[1][0], this.points[1][1]));
     unionNet(n0, n1);
 }
-
 
 
 function schematicCaptureDoubleClick(event) {
@@ -192,28 +186,15 @@ SchematicCapture = function () {
 
     this.symbols.push(new WireSymbol(-10, 2, 30, 2));
 
-    // this.symbols.push(new WireSymbol(0, -20, 20, -20));
-    // this.symbols.push(new WireSymbol(0, -20, 0, -10));
-    // this.symbols.push(new WireSymbol(40, -20, 40, -10));
-    // this.symbols.push(new ResistorSymbol(30, -20, 0, 200));
-    console.log(this.symbols)
-    //this.symbols.push(new CapSymbol (20,-20,0,.000001));
-
-
-
     this.schematicCanvas = document.getElementById("schematic")
     this.schematicCanvas.schematicCapture = this;
     this.schematicCanvas.addEventListener("dblclick", schematicCaptureDoubleClick);
     this.schematicCanvas.addEventListener("mousedown", schematicCaptureMouseDown);
     this.schematicCanvas.addEventListener("mouseup", schematicCaptureMouseUp);
     this.schematicCanvas.addEventListener("mousemove", schematicCaptureMouseMove);
+   
     document.addEventListener("keydown", schematicCaptureKeyDown);
 
-}
-
-SchematicCapture.prototype.clear = function () {
-    this.symbols = [];
-    this.draw();
 }
 
 SchematicCapture.prototype.deviceToWorldX = function (xDevice) {
@@ -278,7 +259,6 @@ SchematicCapture.prototype.doubleClick = function (event) {
     fixEvent(event);
     if (this.highlight) {
         $("#dialog").slideDown()
-
         $("#dialog")[0].editBack = this.highlight
         $("#dialog").css({ left: event.offsetX, top: event.offsetY })
         $("#editValue").focus()
@@ -293,8 +273,6 @@ SchematicCapture.prototype.mouseDown = function (event) {
     this.dragging = true;
     if (!this.highlight) {
         this.wiring = true;
-        var symbol = new WireSymbol(this.snap(this.eventX), this.snap(this.eventY), this.snap(this.eventX), this.snap(this.eventY));
-        //this.symbols.push(symbol)
         this.wiring = symbol;
     }
 }
@@ -314,15 +292,7 @@ SchematicCapture.prototype.mouseMove = function (event) {
     this.eventX = newX;
     this.eventY = newY;
 
-    if (this.dragging) {
-        if (this.highlight) {
-            //this.highlight.addOffset(offX, offY)
-            this.draw()
-        } else if (this.wiring) {
-            this.wiring.updateSecondPoint(this.snap(this.eventX), this.snap(this.eventY));
-            this.draw();
-        }
-    } else {
+    if(!this.dragging) {
         var oldHighlight = this.highlight;
         this.highlight = null;
         for (var v in this.symbols) {
@@ -338,118 +308,9 @@ SchematicCapture.prototype.mouseMove = function (event) {
 }
 
 SchematicCapture.prototype.mouseUp = function (event) {
-    if (this.wiring) {
-        if (this.wiring.points[1][0] == 0 && this.wiring.points[1][1] == 0) {
-            this.symbols.pop(); // remove zero length wire
-        }
-    }
+    
     this.dragging = false;
     this.wiring = null;
-}
-
-SchematicCapture.prototype.addComponent = function (componentType, x, y) {
-    var newGuy = null;
-    var canvasPos = $(this.schematicCanvas).position()
-    var xDevice = x - canvasPos.left;
-    var yDevice = y - canvasPos.top + 60;
-    var xWorld = this.snap(this.deviceToWorldX(xDevice));
-    var yWorld = this.snap(this.deviceToWorldY(yDevice));
-    this.eventX = null;
-    this.eventy = null;
-
-    switch (componentType) {
-        case "resistor": newGuy = new ResistorSymbol(xWorld, yWorld, 0, 1000); break;
-        case "vSource": newGuy = new VSourceSymbol(xWorld, yWorld, 0, "square,.3,0,5"); break;
-
-        default: return;
-    }
-    //this.symbols.push(newGuy)
-    this.highlight = newGuy
-    this.dragging = true;
-    this.draw()
-}
-
-SchematicCapture.prototype.buildNet = function () {
-    var netNodes = {};
-    var that = this;
-    var nodeName = function (pt) {
-        return Math.floor(pt[0] / that.dx) + "," + Math.floor(pt[1] / that.dx);
-    };
-    var findRoot = function (x) {
-        while (netNodes[x][3] != x) x = netNodes[x][3];
-        return x;
-    }
-    var counter = 0;
-    netNodes["GND"] = [undefined, undefined, 0, "GND"];
-    var netRecord = function (pt) {
-        var name = nodeName(pt);
-        if (netNodes[name] == undefined) {
-            //var canonical="n"+counter;
-            //netNodes[canonical]=[-1000,-1000,0,canonical];
-            netNodes[name] = [pt[0], pt[1], 0, name];
-            counter++;
-        }
-        netNodes[name][2]++;
-        return findRoot(name)
-    }
-    var unionNet = function (name1, name2) {
-        if (name1 == "GND") netNodes[name2][3] = name1;
-        else netNodes[name1][3] = name2;
-        //netNodes[name1][3]=name2;
-    }
-    //console.log("hi:" +nodeName([3,4]))
-
-    var components = [];
-    for (var x in this.symbols) {
-        var symbol = this.symbols[x];
-        var symbolRep = symbol.buildNet(netRecord, unionNet);
-        if (symbolRep) components.push(symbolRep);
-    }
-    /// Get a list of active names
-    var activeNames = {};
-    for (var n in netNodes) {
-        var name = findRoot(n);
-        activeNames[name] = 1;
-    }
-
-    /// now union find lookup
-    for (var item in components) {
-        var nodes = components[item][1]
-        for (var node in nodes) {
-            nodes[node] = findRoot(nodes[node]);
-        }
-    }
-    text = "<b>Simulation List</b><br/>"
-    for (var x in components) {
-        text += JSON.stringify(components[x]) + "<br/>"
-    }
-    $("#rep").html(text)
-    createCircuitFromNetList(activeNames, components);
-
-
-    return netNodes;
-}
-
-var circuit = null;
-function createCircuitFromNetList(names, components) {
-    circuit = new Circuit();
-    // Make a list of all the voltage nodes to graph
-    namesToGraph = []
-    for (var n in names) namesToGraph.push(n);
-    // Take visual components and turn them into simulation components
-    for (var n in components) {
-        var node = components[n];
-        switch (node[0]) {
-            case "R": circuit.addR(node[1][0], node[1][1], node[2]); break;
-            case "C": circuit.addC(node[1][0], node[1][1], node[2]); break;
-            case "V": circuit.addVoltage(node[1][0], node[1][1], node[2]); break;
-            case "D": circuit.addD(node[1][0], node[1][1], node[2]); break;
-            case "L": circuit.addI(node[1][0], node[1][1], node[2]); break;
-        }
-    }
-    // solve and graph the circuit
-    //var foo = circuit.transient(3.0, .001, namesToGraph);
-    //graph(0, 2, namesToGraph, foo);
 }
 
 SchematicCapture.prototype.draw = function () {
@@ -495,21 +356,7 @@ SchematicCapture.prototype.draw = function () {
     // draw symbols
     for (var v in this.symbols) {
         var symbol = this.symbols[v];
-        console.log(symbol);
         symbol.draw(xToDevice, yToDevice, context, symbol == this.highlight,symbol);
     }
 
-    // find all connection points so we can draw if connections happen
-    var net = this.buildNet()
-    context.strokeStyle = "rgba(200,20,20, 1)";
-    for (var n in net) {
-        context.beginPath()
-        var data = net[n];
-        context.arc(xToDevice(data[0]), yToDevice(data[1]), 4, 0, 2 * Math.PI, true);
-        if (data[2] > 1) context.fill();
-        else context.stroke();
-    }
-    // draw current mouse coords
-    //context.fillText("x="+this.eventX+" y="+this.eventY,0,30)
-    // 
 }
