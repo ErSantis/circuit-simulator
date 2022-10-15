@@ -1,68 +1,32 @@
 <!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expofisica</title>
+    <meta name="description" content="Simulador Kirchoff onnline">
+    <link rel="stylesheet" href="styles/style1.css">
+    <!-- <link rel="icon" type="image/png" href="..\static\images\favicon2.png"/> -->
+  </head>
+  <body>
+  	<header>
+  	  <h1>Simulador Kirchoff</h1>
+  	</header>
+  	<nav>
+  	  <ul>
+  	  	<li class="nav-item-active"><a href="/"">Home</a></li>
+  	  	<li class="nav-item-"><a href='circuit1/circuit1.html'>Example 1</a></li>
+  	  	<li class="nav-item-"><a href="/circuit2/">Example 2</a></li>
+        <li class="nav-item-"><a href="/circuit3/">Example 3</a></li>
+        <li class="nav-item-"><a href="/builder/">Build</a></li>
+  	  </ul>
+  	</nav>
+    
+	<article id="indexArticle">
+		<h2>Bienvenido Mamawebo</h2>
+		<p>Aqui va le descripcion pero no se que poner xd</p></p>
 
-<html>
+	</article>
 
-<head>
-	<script src="jquery-2.1.1.min.js"></script>
-	<link rel="stylesheet" href="styles/styles.css">
-	<script src="circuit.js"></script>
-	<script src="schematicCapture.js"></script>
-</head>
-
-<body>
-	<div id="topBar">
-		<b>Ley de Ohm</b> | Expofisica
-	</div>
-	<div class="components">
-		<table>
-			<tr>
-				<td>
-					<img class="componentButton" id="vSource" src="icons/voltage.png" width="50px">
-					<img class="componentButton" id="resistor" src="icons/resistor.png" width="50px">
-					<img class="componentButton" id="capacitor" src="icons/capacitor.png" width="50px">
-				</td>
-				<td style='text-align:right'><span id='clear' class="button">Clear Components</span></Td>
-			</tr>
-		</table>
-	</div>
-
-	<canvas id="schematic"></canvas>
-
-
-
-	<div style='position:absolute' id="dialog" class="editor">
-		Edit: <input id="editValue" />
-	</div>
-
-
-	<script>
-
-
-		function resizeWindow() {
-			$("#schematic")[0].width = window.innerWidth;
-			$("#schematic")[0].height = window.innerHeight;
-
-			var heightOffset = $("#components").innerHeight();
-			$("#schematic").css({ top: heightOffset, width: window.innerWidth, height: window.innerHeight });
-
-			schematic.draw();
-		}
-
-		$(document).ready(function () {
-			schematic = new SchematicCapture();
-			resizeWindow();
-			$(".componentButton").click(function (e) {
-				var pos = $(e.currentTarget).position()
-				//console.log(pos)
-				schematic.addComponent(e.currentTarget.id, pos.left, pos.top)
-			});
-			$("#clear").click(function (e) {
-				schematic.clear();
-			});
-			window.addEventListener('resize', resizeWindow, false);
-			//schematic.draw();
-		});
-	</script>
-</body>
-
+  </body>
 </html>
