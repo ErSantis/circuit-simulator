@@ -1,16 +1,22 @@
+from re import M
 from flask import Flask, jsonify, render_template, request
-
+import json
 app = Flask(__name__, template_folder='templates')
 
 
-
 @app.route('/')
-def home():
-    return render_template('alfa.html')
+def index():
+    return render_template('index.html')
 
-@app.route('/calculate', methods=['POST'])
-def calculate():
-    pass
+@app.route('/test', methods=['POST'])
+def test():
+    output = request.get_json()
+    print(output) # This is the output that was stored in the JSON within the browser
+    print(type(output))
+    result = json.loads(output) #this converts the json output to a python dictionary
+    print(result) # Printing the new dictionary
+    print(type(result))#this shows the json converted as a python dictionary
+    return result
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5500)

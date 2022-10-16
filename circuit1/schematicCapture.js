@@ -168,21 +168,48 @@ function schematicCaptureKeyDown(event) {
 }
 SchematicCapture = function () {
     this.symbols = new Array;
-
+    
+    this.branch = new Array;
+    this.branches= new Array;
     // basic diff/integrator
     this.symbols.push(new ResistorSymbol(-10, -10, 1, -15));
     this.symbols.push(new VSourceSymbol(-10, -4, 0, 10));
-
+    
+    this.branch.push(this.symbols[0]);
+    this.branch.push(this.symbols[1]);
+    this.branches.push(this.branch);
+    console.log(this.branches);
 
     this.symbols.push(new WireSymbol(-10, -20, 10, -20));
 
     this.symbols.push(new ResistorSymbol(10, -10, 1, 100));
     this.symbols.push(new VSourceSymbol(10, -4, 0, 10));
+    this.branch = new Array;
+    this.branch.push(this.symbols[3]);
+    this.branch.push(this.symbols[4]);
+    this.branches.push(this.branch);
+    
 
     this.symbols.push(new WireSymbol(10, -20, 30, -20));
 
     this.symbols.push(new ResistorSymbol(30, -10, 1, 100));
     this.symbols.push(new VSourceSymbol(30, -4, 0, 10));
+    this.branch = new Array;
+    this.branch.push(this.symbols[6]);
+    this.branch.push(this.symbols[7]);
+    this.branches.push(this.branch);
+
+    const s = JSON.stringify(this.branches); // Stringify converts a JavaScript object or value to a JSON string
+    console.log(s); // Prints the variables to console window, which are in the JSON format
+    window.alert(s)
+    $.ajax({
+        url:"/test",
+        type:"POST",
+        contentType: "application/json",
+        data: JSON.stringify(s)});
+
+
+    
 
     this.symbols.push(new WireSymbol(-10, 2, 30, 2));
 
@@ -192,7 +219,8 @@ SchematicCapture = function () {
     this.schematicCanvas.addEventListener("mousedown", schematicCaptureMouseDown);
     this.schematicCanvas.addEventListener("mouseup", schematicCaptureMouseUp);
     this.schematicCanvas.addEventListener("mousemove", schematicCaptureMouseMove);
-   
+    
+
     document.addEventListener("keydown", schematicCaptureKeyDown);
 
 }
