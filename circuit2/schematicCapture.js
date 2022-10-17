@@ -173,26 +173,46 @@ function schematicCaptureKeyDown(event) {
 }
 SchematicCapture = function () {
     this.symbols = new Array;
+    this.branch = new Array;
+    this.branches = new Array;
 
-    // basic diff/integrator
-    this.symbols.push(new ResistorSymbol(-10, -10, 1, -15));
+    // Branch 1
+    this.symbols.push(new ResistorSymbol(-10, -10, 1, 2));
     this.symbols.push(new VSourceSymbol(-10, -4, 0, 10));
 
+    //Push to the branch
+    this.branch.push(this.symbols[0].type, this.symbols[0].value);
+    this.branch.push(this.symbols[1].type, this.symbols[1].value);
 
-    this.symbols.push(new WireSymbol(-10, -20, 10, -20, "Undefined"));
+    //Push the branch to the branches
+    this.branches.push(this.branch);
+    
+    // Branch 2
+    this.symbols.push(new ResistorSymbol(10, -10, 1, 5));
 
-    this.symbols.push(new ResistorSymbol(10, -10, 1, 100));
-    //this.symbols.push(new VSourceSymbol(10, -4, 0, 10));
+    //Push to the branch
+    this.branch.push(this.symbols[2].type, this.symbols[2].value);
 
-    this.symbols.push(new WireSymbol(10, -20, 30, -20, "Undefined"));
+    //Push the branch to the branches
+    this.branches.push(this.branch);
 
-    this.symbols.push(new ResistorSymbol(30, -10, 1, 100));
+    // Branch 3
+    this.symbols.push(new ResistorSymbol(30, -10, 1, 10));
+    
+    //Push to the branch
+    this.branch.push(this.symbols[3].type, this.symbols[3].value);
+
+    //Push the branch to the branches
+    this.branches.push(this.branch);
+
+    // Wires varios
     this.symbols.push(new WireSymbol(10, -10, 10, 2,"Undefined"));
     this.symbols.push(new WireSymbol(30, -10, 30, 2,"Undefined"));
-    //this.symbols.push(new VSourceSymbol(30, -4, 0, 10));
-
     this.symbols.push(new WireSymbol(-10, 2, 30, 2,"Undefined"));
-
+    this.symbols.push(new WireSymbol(-10, -20, 10, -20, "Undefined"));
+    this.symbols.push(new WireSymbol(10, -20, 30, -20, "Undefined"));
+    
+    //Wires to make a arrow
     this.symbols.push(new WireSymbol(12, -4, 12, 0,"I2"));
     this.symbols.push(new WireSymbol(11, -4, 13, -4,"Undefined"));
     this.symbols.push(new WireSymbol(11, -4, 12, -6,"Undefined"));
