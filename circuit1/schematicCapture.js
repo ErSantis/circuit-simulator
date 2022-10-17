@@ -45,7 +45,7 @@ Component.prototype.objectToWorld = function (x, y) {
 }
 
 // Draw a component at a given location
-Component.prototype.draw = function (xToDevice, yToDevice, context, highlight,symbol) {
+Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, symbol) {
     if (highlight) context.strokeStyle = "#ff8833";
     else context.strokeStyle = "#000000";
     context.beginPath();
@@ -80,10 +80,10 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight,sy
     if (this.value) {
         context.font = "10pt sans-serif"
         context.fillStyle = "#000000";
-        if(symbol.type == "R")
-        context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
-        else if(symbol.type == "V")
-        context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]));
+        if (symbol.type == "R")
+            context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
+        else if (symbol.type == "V")
+            context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]));
     }
 }
 
@@ -168,48 +168,53 @@ function schematicCaptureKeyDown(event) {
 }
 SchematicCapture = function () {
     this.symbols = new Array;
-    
+
     this.branch = new Array;
-    this.branches= new Array;
-    // basic diff/integrator
-    this.symbols.push(new ResistorSymbol(-10, -10, 1, -15));
+    this.branches = new Array;
+
+    // Branch 1, Create symbols
+    this.symbols.push(new ResistorSymbol(-10, -10, 1, 3));
     this.symbols.push(new VSourceSymbol(-10, -4, 0, 10));
-    
-    this.branch.push(this.symbols[0]);
-    this.branch.push(this.symbols[1]);
+
+    //Push to the branch
+    this.branch.push(this.symbols[0].type, this.symbols[0].value);
+    this.branch.push(this.symbols[1].type, this.symbols[1].value);
+
+    //Push branch to branches
     this.branches.push(this.branch);
-    console.log(this.branches);
 
     this.symbols.push(new WireSymbol(-10, -20, 10, -20));
 
-    this.symbols.push(new ResistorSymbol(10, -10, 1, 100));
-    this.symbols.push(new VSourceSymbol(10, -4, 0, 10));
+    //Branch 2, Create symbols
+    this.symbols.push(new ResistorSymbol(10, -10, 1, 10));
+    this.symbols.push(new VSourceSymbol(10, -4, 0, 7));
+
+    //Push to the branch
     this.branch = new Array;
-    this.branch.push(this.symbols[3]);
-    this.branch.push(this.symbols[4]);
+    this.branch.push(this.symbols[3].type, this.symbols[3].value);
+    this.branch.push(this.symbols[4].type, this.symbols[4].value);
+
+    //Push branch to branches
     this.branches.push(this.branch);
-    
 
     this.symbols.push(new WireSymbol(10, -20, 30, -20));
 
-    this.symbols.push(new ResistorSymbol(30, -10, 1, 100));
-    this.symbols.push(new VSourceSymbol(30, -4, 0, 10));
+    //Branch 3, Create symbols
+    this.symbols.push(new ResistorSymbol(30, -10, 1, 2));
+    this.symbols.push(new VSourceSymbol(30, -4, 0, 5));
+
+    //Push to the branch
     this.branch = new Array;
-    this.branch.push(this.symbols[6]);
-    this.branch.push(this.symbols[7]);
+    this.branch.push(this.symbols[6].type, this.symbols[6].value);
+    this.branch.push(this.symbols[7].type, this.symbols[7].value);
+
+    //Push branch to branches
     this.branches.push(this.branch);
 
-    const s = JSON.stringify(this.branches); // Stringify converts a JavaScript object or value to a JSON string
-    console.log(s); // Prints the variables to console window, which are in the JSON format
-    window.alert(s)
-    $.ajax({
-        url:"/test",
-        type:"POST",
-        contentType: "application/json",
-        data: JSON.stringify(s)});
+    console.log(this.branches)
 
-
-    
+    // Post branches
+    post.call(this);
 
     this.symbols.push(new WireSymbol(-10, 2, 30, 2));
 
@@ -219,11 +224,21 @@ SchematicCapture = function () {
     this.schematicCanvas.addEventListener("mousedown", schematicCaptureMouseDown);
     this.schematicCanvas.addEventListener("mouseup", schematicCaptureMouseUp);
     this.schematicCanvas.addEventListener("mousemove", schematicCaptureMouseMove);
-    
+
 
     document.addEventListener("keydown", schematicCaptureKeyDown);
+}   
 
+function post() {
+    fetch('http://localhost:5501/test', {
+        method: "POST",
+        body: JSON.stringify(this.branches),
+        headers: { "Content-type": "application/json; charset=UTF-8" }
+    })
+        .then(response => response.json())
+        .then(json => console.log(json));
 }
+
 
 SchematicCapture.prototype.deviceToWorldX = function (xDevice) {
     return xDevice / this.width * (this.xmax - this.xmin) + this.xmin
@@ -300,8 +315,7 @@ SchematicCapture.prototype.mouseDown = function (event) {
     this.eventY = this.snap(this.deviceToWorldY(event.offsetY));
     this.dragging = true;
     if (!this.highlight) {
-        this.wiring = true;
-        this.wiring = symbol;
+        this.wiring = true
     }
 }
 
@@ -320,7 +334,7 @@ SchematicCapture.prototype.mouseMove = function (event) {
     this.eventX = newX;
     this.eventY = newY;
 
-    if(!this.dragging) {
+    if (!this.dragging) {
         var oldHighlight = this.highlight;
         this.highlight = null;
         for (var v in this.symbols) {
@@ -336,7 +350,7 @@ SchematicCapture.prototype.mouseMove = function (event) {
 }
 
 SchematicCapture.prototype.mouseUp = function (event) {
-    
+
     this.dragging = false;
     this.wiring = null;
 }
@@ -384,7 +398,8 @@ SchematicCapture.prototype.draw = function () {
     // draw symbols
     for (var v in this.symbols) {
         var symbol = this.symbols[v];
-        symbol.draw(xToDevice, yToDevice, context, symbol == this.highlight,symbol);
+        symbol.draw(xToDevice, yToDevice, context, symbol == this.highlight, symbol);
     }
+    post.call(this)
 
 }
