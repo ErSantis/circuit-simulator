@@ -175,34 +175,115 @@ function schematicCaptureKeyDown(event) {
 }
 SchematicCapture = function () {
     this.symbols = new Array;
+    this.branch = new Array;
+    this.branches = new Array;
 
-    // basic diff/integrator
-    this.symbols.push(new ResistorSymbol(-20, -4, 1, 1e3));
-    this.symbols.push(new ResistorSymbol(-20, -14, 1, 1e3));
-    this.symbols.push(new WireSymbol(-20, -24, -10, -24));
-    this.symbols.push(new VSourceSymbol(-4, -24, 3, 1));
-    this.symbols.push(new ResistorSymbol(2, -14, 1, 10));
-    this.symbols.push(new ResistorSymbol(2, -4, 1, 10));
+    // Branch 1
     this.symbols.push(new ResistorSymbol(-20, -14, 0, 10));
     this.symbols.push(new VSourceSymbol(-4, -14, 3, 1));
+
+    //Push to the branch
+    this.branch.push(this.symbols[0]);
+    this.branch.push(this.symbols[1]);
+
+    //Push the branch to the branches
+    this.branches.push(this.branch);
+
+    // Branch 2
+    this.symbols.push(new ResistorSymbol(-20, -4, 1, 1e3));
+
+    //Push to the branch
+    this.branch = new Array;
+    this.branch.push(this.symbols[2]);
+
+    //Push the branch to the branches
+    this.branches.push(this.branch);
+
+    // Branch 3
+    this.symbols.push(new ResistorSymbol(-20, -14, 1, 1e3));
+    this.symbols.push(new VSourceSymbol(-4, -24, 3, 1));
+
+    //Push to the branch
+    this.branch = new Array;
+    this.branch.push(this.symbols[3]);
+    this.branch.push(this.symbols[4]);
+
+    //Push the branch to the branches   
+    this.branches.push(this.branch);
+
+    // Branch 4
+    this.symbols.push(new VSourceSymbol(24, -8, 0, 1));
+    this.symbols.push(new ResistorSymbol(2, 8, 0, 10));
+
+    //Push to the branch
+    this.branch = new Array;
+    this.branch.push(this.symbols[5]);
+    this.branch.push(this.symbols[6]);
+
+    //Push the branch to the branches
+    this.branches.push(this.branch);
+
+    // Branch 5
+    this.symbols.push(new ResistorSymbol(2, -4, 1, 10));
     this.symbols.push(new VSourceSymbol(2, 2, 2, 1));
+
+    //Push to the branch
+    this.branch = new Array;
+    this.branch.push(this.symbols[7]);
+    this.branch.push(this.symbols[8]);
+
+    //Push the branch to the branches
+    this.branches.push(this.branch);
+
+    // Branch 6
+    this.symbols.push(new ResistorSymbol(2, -24, 0, 10));
+    this.symbols.push(new ResistorSymbol(24, -14, 1, 10));
+
+    //Push to the branch
+    this.branch = new Array;
+    this.branch.push(this.symbols[9]);
+    this.branch.push(this.symbols[10]);
+
+    //Push the branch to the branches
+    this.branches.push(this.branch);
+    
+    // Branch 7
+    this.symbols.push(new ResistorSymbol(2, -14, 1, 10));
+
+    //Push to the branch
+    this.branch = new Array;
+    this.branch.push(this.symbols[11]);
+
+    //Push the branch to the branches
+    this.branches.push(this.branch);
+
+    // Branch 8
+    this.symbols.push(new ResistorSymbol(-8, 18, 0, 10));
+    this.symbols.push(new ResistorSymbol(14, 18, 0, 10));
+    this.symbols.push(new VSourceSymbol(-14, 18, 1, 1));
+    this.symbols.push(new VSourceSymbol(8, 18, 3, 1));
+
+    //Push to the branch
+    this.branch = new Array;
+    this.branch.push(this.symbols[12]);
+    this.branch.push(this.symbols[13]);
+    this.branch.push(this.symbols[14]);
+    this.branch.push(this.symbols[15]);
+
+    //Push the branch to the branches
+    this.branches.push(this.branch);
+
+    //Wires
+    this.symbols.push(new WireSymbol(-20, -24, -10, -24));
     this.symbols.push(new WireSymbol(-20, 8, 2, 8));
     this.symbols.push(new WireSymbol(-20, -4, -20, 8));
-    this.symbols.push(new ResistorSymbol(2, 8, 0, 10));
-    this.symbols.push(new ResistorSymbol(2, -24, 0, 10));
     this.symbols.push(new WireSymbol(12, -24, 24, -24));
-    this.symbols.push(new ResistorSymbol(24, -14, 1, 10));
     this.symbols.push(new WireSymbol(2, -14, 24, -14));
-    this.symbols.push(new VSourceSymbol(24, -8, 0, 1));
     this.symbols.push(new WireSymbol(24, -2, 24, 8));
     this.symbols.push(new WireSymbol(24, 8, 12, 8));
 
     this.symbols.push(new WireSymbol(-30, -14, -20, -14));
     this.symbols.push(new WireSymbol(-30, -14, -30, 18));
-    this.symbols.push(new VSourceSymbol(-14, 18, 1, 1));
-    this.symbols.push(new ResistorSymbol(-8, 18, 0, 10));
-    this.symbols.push(new VSourceSymbol(8, 18, 3, 1));
-    this.symbols.push(new ResistorSymbol(14, 18, 0, 10));
     this.symbols.push(new WireSymbol(34, 18, 24, 18));
     this.symbols.push(new WireSymbol(34, 18, 34, -14));
     this.symbols.push(new WireSymbol(34, -14, 24, -14));
@@ -298,7 +379,6 @@ SchematicCapture.prototype.mouseDown = function (event) {
     this.dragging = true;
     if (!this.highlight) {
         this.wiring = true;
-        this.wiring = symbol;
     }
 }
 
