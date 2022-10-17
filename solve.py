@@ -8,8 +8,8 @@ class Circuit():
 
     # Variable units
     V_units = 'V'
-    R_units = 'kO'
-    I_units = 'mA'
+    R_units = 'O'
+    I_units = 'A'
 
 
     # Constructor
