@@ -180,6 +180,7 @@ SchematicCapture = function () {
     this.symbols.push(new ResistorSymbol(-10, -10, 1, 2));
     this.symbols.push(new VSourceSymbol(-10, -4, 0, 10));
 
+
     //Push to the branch
     this.branch.push(this.symbols[0].type, this.symbols[0].value);
     this.branch.push(this.symbols[1].type, this.symbols[1].value);
@@ -189,10 +190,11 @@ SchematicCapture = function () {
     
     // Branch 2
     this.symbols.push(new ResistorSymbol(10, -10, 1, 5));
-
+    
     //Push to the branch
+    this.branch = new Array;
     this.branch.push(this.symbols[2].type, this.symbols[2].value);
-
+    
     //Push the branch to the branches
     this.branches.push(this.branch);
 
@@ -200,6 +202,7 @@ SchematicCapture = function () {
     this.symbols.push(new ResistorSymbol(30, -10, 1, 10));
     
     //Push to the branch
+    this.branch = new Array;
     this.branch.push(this.symbols[3].type, this.symbols[3].value);
 
     //Push the branch to the branches
@@ -228,7 +231,15 @@ SchematicCapture = function () {
     document.addEventListener("keydown", schematicCaptureKeyDown);
 
 }
-
+function post() {
+    fetch('http://localhost:5501/circuit2', {
+        method: "POST",
+        body: JSON.stringify(this.branches),
+        headers: { "Content-type": "application/json; charset=UTF-8" }
+    })
+        .then(response => response.json())
+        .then(json => console.log(json));
+}
 SchematicCapture.prototype.deviceToWorldX = function (xDevice) {
     return xDevice / this.width * (this.xmax - this.xmin) + this.xmin
 }
@@ -389,5 +400,5 @@ SchematicCapture.prototype.draw = function () {
         var symbol = this.symbols[v];
         symbol.draw(xToDevice, yToDevice, context, symbol == this.highlight,symbol);
     }
-
+    post.call(this);
 }
