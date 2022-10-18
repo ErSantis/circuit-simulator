@@ -1,17 +1,3 @@
-// Copyright 2014 Andrew Slele
-// 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 //------------------------------------------------------------------------------------------
 // Draw a graph (oscilloscope)
 //------------------------------------------------------------------------------------------
@@ -187,35 +173,6 @@ Capacitor.prototype.matrix=function(dt, time, system, vPrev, vOld){
 			));
 }
 
-
-//------------------------------------------------------------------------------------------
-// Inductor Class
-//------------------------------------------------------------------------------------------
-function Inductor(node1,node2,nodeI,L){
-	this.node1=node1;
-	this.node2=node2;
-	this.nodeI=nodeI;
-	this.L=L;
-}
-
-Inductor.prototype.matrix=function(dt, time, system, vPrev, vOld){
-	// v = L di/dt
-	// v1-v2 = L di/dt
-	// v1-v2 = (i-iold) L/dt
-	// i L/dt + v2 - v1 = iold L/dt
-	var L_div_dt=this.L/dt;
-	system.addToMatrix(this.node1,this.nodeI,1);
-	system.addToB(this.node1,-vPrev[this.nodeI]);
-	system.addToMatrix(this.node2,this.nodeI,-1);
-	system.addToB(this.node2,vPrev[this.nodeI]);
-
-	system.addToMatrix(this.nodeI,this.nodeI,L_div_dt);
-	system.addToMatrix(this.nodeI,this.node1,-1);
-	system.addToMatrix(this.nodeI,this.node2,1);
-	system.addToB(this.nodeI,(vOld[this.nodeI])*0-(-vPrev[this.node1]+vPrev[this.node2]+L_div_dt*(vPrev[this.nodeI]-vOld[this.nodeI])));
-	//system.addToB(this.nodeI,-vPrev[this.node1]+vPrev[this.node2]+L_div_dt*(vPrev[this.nodeI]-vOld[this.nodeI])));
-	//system.addToB(this.nodeI,-L_div_dt*vOld[this.nodeI]);
-}
 //------------------------------------------------------------------------------------------
 // Voltage Class
 //------------------------------------------------------------------------------------------
