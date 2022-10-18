@@ -84,6 +84,8 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
             context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
         else if (symbol.type == "V")
             context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]));
+        else if (symbol.type == "I")
+            context.fillText(this.value + " A", xToDevice(pt[0]), yToDevice(pt[1]));
     }
 }
 
@@ -92,7 +94,34 @@ Component.prototype.buildNet = function (recordNet, unionNet) { }
 Component.prototype.inside = function (xWorld, yWorld) {
     return xWorld > this.box[0] && xWorld < this.box[1] && yWorld > this.box[2] && yWorld < this.box[3];
 }
+Intensidad = function (x, y, value) {
+    this.points = [[0, 0], [0, 0]];
+    Component.call(this, x, y, 0)
+    this.value = value
+    this.type = "I"
+}
+Intensidad.prototype = new Component()
+Intensidad.prototype.inside = function (xWorld, yWorld) {
 
+    var wireInsideThreshold = 0.5
+    var len = Math.sqrt(this.points[1][0] * this.points[1][0] + this.points[1][1] * this.points[1][1]);
+    var invLen = 1. / len;
+    var v1 = [xWorld - this.x, yWorld - this.y];
+    var v2 = [this.points[1][0] * invLen, this.points[1][1] * invLen];
+    var parallelDistance = Math.abs(v1[0] * v2[1] - v1[1] * v2[0]); // length of perpendicular segment i.e. distance from light containing segment
+    var perpendicularDistance = (v1[0] * v2[0] + v1[1] * v2[1]); // projected point parameter
+    return Math.abs(parallelDistance) < wireInsideThreshold && perpendicularDistance > .5 * wireInsideThreshold && perpendicularDistance < len - .5 * wireInsideThreshold
+}
+Intensidad.prototype.updateSecondPoint = function (x, y) {
+    this.points[1][0] = x - this.x;
+    this.points[1][1] = y - this.y;
+    this.updateBox();
+}
+Intensidad.prototype.buildNet = function (netRecord, unionNet) {
+    var n0 = netRecord(this.objectToWorld(this.points[0][0], this.points[0][1]));
+    var n1 = netRecord(this.objectToWorld(this.points[1][0], this.points[1][1]));
+    unionNet(n0, n1);
+}
 ResistorSymbol = function (x, y, rotation, value) {
     /// connected points that look like a resistor
     this.points = [[0, 0], [2, 0], [2.5, -1], [3.5, 1], [4.5, -1], [5.5, 1], [6.5, -1], [7.5, 1], [8, 0], [10, 0]]
@@ -166,6 +195,22 @@ function schematicCaptureMouseMove(event) {
 function schematicCaptureKeyDown(event) {
     return document.getElementById("schematic").schematicCapture.keyDown(event)
 }
+function post() {
+    fetch('http://localhost:5501/circuit1', {
+        method: "POST",
+        body: JSON.stringify(this.branches),
+        headers: { "Content-type": "application/json; charset=UTF-8" }
+    })
+        .then(response => response.json())
+        .then(json => {
+            console.log(json)
+            const intensidades = this.symbols.filter(symbol => symbol.type == "I");
+
+            for (let i = 0; i < intensidades.length; i++) {
+                intensidades[i].value = json[i].toFixed(2);
+            }
+        });
+}
 SchematicCapture = function () {
     this.symbols = new Array;
 
@@ -175,6 +220,7 @@ SchematicCapture = function () {
     // Branch 1, Create symbols
     this.symbols.push(new ResistorSymbol(-10, -10, 1, 3));
     this.symbols.push(new VSourceSymbol(-10, -4, 0, 10));
+    this.symbols.push(new Intensidad(-22, -15, 1));
 
     //Push to the branch
     this.branch.push(this.symbols[0].type, this.symbols[0].value);
@@ -188,11 +234,12 @@ SchematicCapture = function () {
     //Branch 2, Create symbols
     this.symbols.push(new ResistorSymbol(10, -10, 1, 10));
     this.symbols.push(new VSourceSymbol(10, -4, 0, 7));
+    this.symbols.push(new Intensidad(10, -15, "I2"));
 
-    //Push to the branch
+    //Push to the branch    
     this.branch = new Array;
-    this.branch.push(this.symbols[3].type, this.symbols[3].value);
     this.branch.push(this.symbols[4].type, this.symbols[4].value);
+    this.branch.push(this.symbols[5].type, this.symbols[5].value);
 
     //Push branch to branches
     this.branches.push(this.branch);
@@ -202,43 +249,46 @@ SchematicCapture = function () {
     //Branch 3, Create symbols
     this.symbols.push(new ResistorSymbol(30, -10, 1, 2));
     this.symbols.push(new VSourceSymbol(30, -4, 0, 5));
+    this.symbols.push(new Intensidad(35, -15, 1));
 
     //Push to the branch
     this.branch = new Array;
-    this.branch.push(this.symbols[6].type, this.symbols[6].value);
-    this.branch.push(this.symbols[7].type, this.symbols[7].value);
+    this.branch.push(this.symbols[8].type, this.symbols[8].value);
+    this.branch.push(this.symbols[9].type, this.symbols[9].value);
 
     //Push branch to branches
     this.branches.push(this.branch);
 
-    console.log(this.branches)
-
-    // Post branches
-    post.call(this);
-
     this.symbols.push(new WireSymbol(-10, 2, 30, 2));
 
+    this.button = document.getElementById("button");
     this.schematicCanvas = document.getElementById("schematic")
     this.schematicCanvas.schematicCapture = this;
     this.schematicCanvas.addEventListener("dblclick", schematicCaptureDoubleClick);
     this.schematicCanvas.addEventListener("mousedown", schematicCaptureMouseDown);
     this.schematicCanvas.addEventListener("mouseup", schematicCaptureMouseUp);
     this.schematicCanvas.addEventListener("mousemove", schematicCaptureMouseMove);
-
+    this.button.addEventListener('click', () => {
+        updateBranches.call(this)
+        post.call(this);
+    
+    });
 
     document.addEventListener("keydown", schematicCaptureKeyDown);
-}   
-
-function post() {
-    fetch('http://localhost:5501/test', {
-        method: "POST",
-        body: JSON.stringify(this.branches),
-        headers: { "Content-type": "application/json; charset=UTF-8" }
-    })
-        .then(response => response.json())
-        .then(json => console.log(json));
 }
 
+
+function updateBranches() {
+    this.branches[0] = [
+        this.symbols[0].type, this.symbols[0].value,
+        this.symbols[1].type, this.symbols[1].value]
+    this.branches[1] = [
+        this.symbols[4].type, this.symbols[4].value,
+        this.symbols[5].type, this.symbols[5].value]
+    this.branches[2] = [
+        this.symbols[8].type, this.symbols[8].value,
+        this.symbols[9].type, this.symbols[9].value]    
+}
 
 SchematicCapture.prototype.deviceToWorldX = function (xDevice) {
     return xDevice / this.width * (this.xmax - this.xmin) + this.xmin
@@ -288,9 +338,13 @@ SchematicCapture.prototype.keyDown = function (event) {
             this.highlight.updateBox();
             event.preventDefault();
             this.draw();
+            console.log("rotation is " + this.highlight.rotation)
+            console.log(this)
+
             return false;
         }
     } else if (event.keyCode == 8) {
+
         event.preventDefault();
         return false;
     }
@@ -343,9 +397,9 @@ SchematicCapture.prototype.mouseMove = function (event) {
                 this.highlight = symbol;
             }
         }
-        if (this.highlight != oldHighlight) {
-            this.draw();
-        }
+
+        this.draw();
+
     }
 }
 
@@ -367,9 +421,12 @@ SchematicCapture.prototype.draw = function () {
     this.ymax = (this.xmax - this.xmin) / this.width * this.height + this.ymin
     /// xlen / width = ylen / height
     this.dx = 2;
+    // this.dx += 0.001
     var schem = this.schematicCanvas;
     schem.width = schem.width;
     var context = schem.getContext("2d");
+    // request frame for animation
+
     context.beginPath()
     var self = this; // bind to outer scope
     var xToDevice = function (x) { return (x - self.xmin) / (self.xmax - self.xmin) * self.width };
@@ -395,11 +452,11 @@ SchematicCapture.prototype.draw = function () {
 
     context.strokeStyle = "rgba(0,0,0, 1)";
     context.lineWidth = 2;
+
     // draw symbols
     for (var v in this.symbols) {
         var symbol = this.symbols[v];
         symbol.draw(xToDevice, yToDevice, context, symbol == this.highlight, symbol);
     }
-    post.call(this)
 
 }

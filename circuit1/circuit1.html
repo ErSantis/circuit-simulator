@@ -6,7 +6,7 @@
 	<script src="../jquery-2.1.1.min.js"></script>
 	<link rel="stylesheet" href="../styles/styles.css">
 	<link rel="stylesheet" href="../styles/style1.css">
-	<!-- <script src="circuit.js"></script> -->
+	<button id='button'>Resolver</button>
 	<script src="schematicCapture.js"></script>
 </head>
 
@@ -16,23 +16,27 @@
 	</header>
 	<nav>
 		<ul>
-			<li class="nav-item"><a href="../templates/index.html"">Home</a></li>
+			<li class="nav-item"><a href="../index.html"">Home</a></li>
   	  		<li class=" nav-item-active"><a href='circuit1.html'>Example 1</a></li>
 			<li class="nav-item-"><a href="../circuit2/circuit2.html">Example 2</a></li>
 			<li class="nav-item-"><a href="../circuit3/circuit3.html">Example 3</a></li>
-			<li class="nav-item-"><a href="/builder/">Build</a></li>
+			<li class="nav-item-"><a href="../build/index.html">Build</a></li>
 		</ul>
 	</nav>
+	
 
 	<canvas id="schematic"></canvas>
+
+
+	
 
 
 	<div style='position:absolute' id="dialog" class="editor">
 		Edit: <input id="editValue" />
 	</div>
-	
+
 	<script>
-		
+
 
 		function resizeWindow() {
 			$("#schematic")[0].width = window.innerWidth - 600;
