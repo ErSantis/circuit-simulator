@@ -67,3 +67,16 @@ canvas {
     position: absolute;
     width: 80%;
 }
+button {
+    font-size: 30pt;
+    font-family: "Helvetica";
+    background: #68eddf;
+    color: #ffffff;
+    border-radius: 5px 5px 5px 5px;  
+    margin: 200px;
+    border: solid;
+    cursor: crosshair;
+    border-width: 2px;
+    float: right;
+    margin-top: 400px;
+}
