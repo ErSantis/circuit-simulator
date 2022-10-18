@@ -46,11 +46,10 @@ Component.prototype.objectToWorld = function (x, y) {
 
 // Draw a component at a given location
 Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, symbol) {
-    console.log(symbol)
-    if (highlight) context.strokeStyle = "#ff8833";
+    if(symbol.type == "I" && symbol.value != undefined) context.fillStyle = "#ff0000";
+    else if (highlight) context.strokeStyle = "#ff8833";
     else context.strokeStyle = "#000000";
     context.beginPath();
-    //var points=[[0,-1],[0,0],[2,0],[2.5,-1],[3.5,1],[4.5,-1],[5.5,1],[6.5,-1],[7.5,1],[8,0],[10,0]]
     var first = true; // first point has to be a moveTo
     for (var dummy in this.points) {
         var ptOrig = this.points[dummy];
@@ -78,10 +77,20 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
     // draw a label for the value of the component
     var pt = this.objectToWorld(3.5, 3.5);
     if (this.value) {
+
         context.font = "10pt sans-serif"
         context.fillStyle = "#000000";
-        if (symbol.type == "R") {
-            context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
+        if(symbol.type == "I"){
+            context.font = "14pt sans-serif"
+            context.fillStyle = "#ff0000";
+            context.fillText(this.value+"A", xToDevice(pt[0]-2), yToDevice(pt[1]));
+        } 
+        else if (symbol.type == "R") {
+            
+            if (symbol.rotation == 1)
+                context.fillText(this.value + "Ω", xToDevice(pt[0] - 9), yToDevice(pt[1]));
+            else
+                context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
         }
 
         else if (symbol.type == "V") {
@@ -90,17 +99,40 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
             } else {
                 context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]));
             }
+
         }
+        else if (symbol.type == "I" && symbol.value != "Undefined")
+            context.fillText(this.value + "A", xToDevice(pt[0] - 3), yToDevice(pt[1]));
 
     }
 }
 
-Component.prototype.buildNet = function (recordNet, unionNet) { }
-
+/* Checking if the mouse is inside the box. */
 Component.prototype.inside = function (xWorld, yWorld) {
     return xWorld > this.box[0] && xWorld < this.box[1] && yWorld > this.box[2] && yWorld < this.box[3];
 }
+/* Creating a new object called ntensidad. */
+Intensidad = function (x, y, value) {
+    this.points = [[0, 0], [0, 0]];
+    Component.call(this, x, y, 0)
+    this.value = value
+    this.type = "I"
+}
+Intensidad.prototype = new Component()
+/* Checking if the mouse is inside the line. */
+Intensidad.prototype.inside = function (xWorld, yWorld) {
 
+    var wireInsideThreshold = 0.5
+    var len = Math.sqrt(this.points[1][0] * this.points[1][0] + this.points[1][1] * this.points[1][1]);
+    var invLen = 1. / len;
+    var v1 = [xWorld - this.x, yWorld - this.y];
+    var v2 = [this.points[1][0] * invLen, this.points[1][1] * invLen];
+    var parallelDistance = Math.abs(v1[0] * v2[1] - v1[1] * v2[0]); // length of perpendicular segment i.e. distance from light containing segment
+    var perpendicularDistance = (v1[0] * v2[0] + v1[1] * v2[1]); // projected point parameter
+    return Math.abs(parallelDistance) < wireInsideThreshold && perpendicularDistance > .5 * wireInsideThreshold && perpendicularDistance < len - .5 * wireInsideThreshold
+}
+
+/* Creating a resistor symbol. */
 ResistorSymbol = function (x, y, rotation, value) {
     /// connected points that look like a resistor
     this.points = [[0, 0], [2, 0], [2.5, -1], [3.5, 1], [4.5, -1], [5.5, 1], [6.5, -1], [7.5, 1], [8, 0], [10, 0]]
@@ -110,13 +142,9 @@ ResistorSymbol = function (x, y, rotation, value) {
 
 }
 ResistorSymbol.prototype = new Component()
-ResistorSymbol.prototype.buildNet = function (recordNet, unionNet) {
-    var n1 = recordNet(this.objectToWorld(0, 0));
-    var n2 = recordNet(this.objectToWorld(10, 0));
-    return ["R", [n1, n2], this.value];
-}
 
 
+/* Creating a new object called VSourceSymbol. */
 VSourceSymbol = function (x, y, rotation, value) {
     this.points = [[0, -6], [0, -4], null, [0, 4], [0, 6], null, [0, -4], [0, -2], null, [-1, -3], [1, -3], null, [-1, 3], [1, 3], null, [-1.5, -2], [0, 1.5], [1.5, -2]];
     this.circles = [[0, 0, 4, 2 * Math.PI]]
@@ -125,17 +153,14 @@ VSourceSymbol = function (x, y, rotation, value) {
     this.type = "V"
 }
 VSourceSymbol.prototype = new Component()
-VSourceSymbol.prototype.buildNet = function (recordNet, unionNet) {
-    var n1 = recordNet(this.objectToWorld(0, -6));
-    var n2 = recordNet(this.objectToWorld(0, 6));
-    return ["V", [n1, n2], this.value]
-}
 
+/* Creating a new object called WireSymbol. */
 WireSymbol = function (x, y, x1, y1) {
     this.points = [[0, 0], [x1 - x, y1 - y]];
     Component.call(this, x, y, 0)
 }
 WireSymbol.prototype = new Component()
+/* Checking if the mouse is inside the wire. */
 WireSymbol.prototype.inside = function (xWorld, yWorld) {
 
     var wireInsideThreshold = 0.5
@@ -147,17 +172,13 @@ WireSymbol.prototype.inside = function (xWorld, yWorld) {
     var perpendicularDistance = (v1[0] * v2[0] + v1[1] * v2[1]); // projected point parameter
     return Math.abs(parallelDistance) < wireInsideThreshold && perpendicularDistance > .5 * wireInsideThreshold && perpendicularDistance < len - .5 * wireInsideThreshold
 }
-WireSymbol.prototype.updateSecondPoint = function (x, y) {
-    this.points[1][0] = x - this.x;
-    this.points[1][1] = y - this.y;
-    this.updateBox();
-}
+
+/* Building a net. */
 WireSymbol.prototype.buildNet = function (netRecord, unionNet) {
     var n0 = netRecord(this.objectToWorld(this.points[0][0], this.points[0][1]));
     var n1 = netRecord(this.objectToWorld(this.points[1][0], this.points[1][1]));
     unionNet(n0, n1);
 }
-
 
 function schematicCaptureDoubleClick(event) {
     event.target.schematicCapture.doubleClick(event)
@@ -174,6 +195,61 @@ function schematicCaptureMouseMove(event) {
 function schematicCaptureKeyDown(event) {
     return document.getElementById("schematic").schematicCapture.keyDown(event)
 }
+/**
+ * It sends a POST request to the server with the branches of the circuit, and then it receives the
+ * currents of the circuit and updates the values of the currents in the circuit
+ */
+function post() {
+    fetch('http://localhost:5501/circuit3', {
+        method: "POST",
+        body: JSON.stringify(this.branches),
+        headers: { "Content-type": "application/json; charset=UTF-8" }
+    })
+        .then(response => response.json())
+        .then(json => {
+            console.log(json)
+            const intensidades = this.symbols.filter(symbol => symbol.type == "I");
+
+            for (let i = 0; i < intensidades.length; i++) {
+                intensidades[i].value = json[i].toFixed(2);
+            }
+        });
+
+}
+/* Updating the branches of the tree. */
+function updateBranches() {
+
+    this.branches[0] = [
+        this.symbols[0].type, this.symbols[0].value,
+        this.symbols[1].type, this.symbols[1].value]
+
+    this.branches[1] = [
+        this.symbols[2].type, this.symbols[2].value]
+
+    this.branches[2] = [
+        this.symbols[3].type, this.symbols[3].value,
+        this.branches[4].type, this.symbols[4].value]
+
+    this.branches[3] = [
+        this.symbols[5].type, this.symbols[5].value,
+        this.symbols[6].type, this.symbols[6].value]
+
+    this.branches[4] = [
+        this.symbols[7].type, this.symbols[7].value,
+        this.symbols[8].type, this.symbols[8].value]
+    this.branches[5] = [
+        this.symbols[9].type, this.symbols[9].value,
+        this.symbols[10].type, this.symbols[10].value]
+    this.branches[6] = [
+        this.symbols[11].type, this.symbols[11].value]
+    this.branches[7] = [
+        this.symbols[12].type, this.symbols[12].value,
+        this.symbols[13].type, this.symbols[13].value,
+        this.symbols[14].type, this.symbols[14].value,
+        this.symbols[15].type, this.symbols[15].value]
+
+}
+/* Creating a schematic capture object. */
 SchematicCapture = function () {
     this.symbols = new Array;
     this.branch = new Array;
@@ -247,7 +323,7 @@ SchematicCapture = function () {
 
     //Push the branch to the branches
     this.branches.push(this.branch);
-    
+
     // Branch 7
     this.symbols.push(new ResistorSymbol(2, -14, 1, 10));
 
@@ -290,28 +366,30 @@ SchematicCapture = function () {
     this.symbols.push(new WireSymbol(34, -14, 24, -14));
     this.symbols.push(new WireSymbol(-30, 18, -20, 18));
 
+    //Intensidades
+    this.symbols.push(new Intensidad(-17, -20, "I1"));
+    this.symbols.push(new Intensidad(-39, 0, "I2"));
+    this.symbols.push(new Intensidad(-20, 0, "I3"));
+    this.symbols.push(new Intensidad(-16, -30, "I4"));
+    this.symbols.push(new Intensidad(15, 4, "I5"));
+    this.symbols.push(new Intensidad(4, -6, "I6"));
+    this.symbols.push(new Intensidad(15, -30, "I7"));
+    this.symbols.push(new Intensidad(4, -20, "I8"));
 
-
-
+    this.button = document.getElementById("button");
     this.schematicCanvas = document.getElementById("schematic")
     this.schematicCanvas.schematicCapture = this;
     this.schematicCanvas.addEventListener("dblclick", schematicCaptureDoubleClick);
     this.schematicCanvas.addEventListener("mousedown", schematicCaptureMouseDown);
     this.schematicCanvas.addEventListener("mouseup", schematicCaptureMouseUp);
     this.schematicCanvas.addEventListener("mousemove", schematicCaptureMouseMove);
+    this.button.addEventListener('click', () => {
+        updateBranches.call(this)
+        post.call(this);
+
+    });
 
     document.addEventListener("keydown", schematicCaptureKeyDown);
-    console.log(this.branches)
-
-}
-function post() {
-    fetch('http://localhost:5501/circuit3', {
-        method: "POST",
-        body: JSON.stringify(this.branches),
-        headers: { "Content-type": "application/json; charset=UTF-8" }
-    })
-        .then(response => response.json())
-        .then(json => console.log(json));
 
 }
 
@@ -335,10 +413,8 @@ function fixEvent(event) {
     }
 }
 
-
+/* A function that is called when a key is pressed. */
 SchematicCapture.prototype.keyDown = function (event) {
-    //console.log(event.keyCode);
-    //console.log("blah "+this.highlight)
     status = $("#dialog")[0].style.display;
     console.log("status is '" + status + "'")
     if (status != "none" && status != "") {
@@ -351,20 +427,6 @@ SchematicCapture.prototype.keyDown = function (event) {
             $("#dialog").hide();
             return false;
         }
-    } else if (this.highlight) {
-        if (event.keyCode == 8) { // delete
-            var index = this.symbols.indexOf(this.highlight);
-            this.symbols.splice(index, 1);
-            event.preventDefault();
-            this.draw();
-            return false;
-        } else if (event.keyCode == 82) { // r
-            this.highlight.rotation = (this.highlight.rotation + 1) % 4
-            this.highlight.updateBox();
-            event.preventDefault();
-            this.draw();
-            return false;
-        }
     } else if (event.keyCode == 8) {
         event.preventDefault();
         return false;
@@ -372,7 +434,7 @@ SchematicCapture.prototype.keyDown = function (event) {
     return true;
 }
 
-
+/* A function that is called when the user double clicks on the canvas. */
 SchematicCapture.prototype.doubleClick = function (event) {
     fixEvent(event);
     if (this.highlight) {
@@ -384,6 +446,7 @@ SchematicCapture.prototype.doubleClick = function (event) {
     }
 }
 
+/* A function that is called when the mouse is clicked. */
 SchematicCapture.prototype.mouseDown = function (event) {
     fixEvent(event);
     this.eventX = this.snap(this.deviceToWorldX(event.offsetX));
@@ -394,6 +457,7 @@ SchematicCapture.prototype.mouseDown = function (event) {
     }
 }
 
+/* Checking if the mouse is inside the symbol. */
 SchematicCapture.prototype.mouseMove = function (event) {
     fixEvent(event);
     var newXraw = this.deviceToWorldX(event.offsetX);
@@ -418,70 +482,17 @@ SchematicCapture.prototype.mouseMove = function (event) {
                 this.highlight = symbol;
             }
         }
-        if (this.highlight != oldHighlight) {
-            this.draw();
-        }
+        this.draw();
     }
 }
 
+/* Setting the dragging and wiring variables to false. */
 SchematicCapture.prototype.mouseUp = function (event) {
 
     this.dragging = false;
     this.wiring = null;
 }
-SchematicCapture.prototype.buildNet = function () {
-    var netNodes = {};
-    var that = this;
-    var nodeName = function (pt) {
-        return Math.floor(pt[0] / that.dx) + "," + Math.floor(pt[1] / that.dx);
-    };
-    var findRoot = function (x) {
-        while (netNodes[x][3] != x) x = netNodes[x][3];
-        return x;
-    }
-    var counter = 0;
-    netNodes["GND"] = [undefined, undefined, 0, "GND"];
-    var netRecord = function (pt) {
-        var name = nodeName(pt);
-        if (netNodes[name] == undefined) {
-            //var canonical="n"+counter;
-            //netNodes[canonical]=[-1000,-1000,0,canonical];
-            netNodes[name] = [pt[0], pt[1], 0, name];
-            counter++;
-        }
-        netNodes[name][2]++;
-        return findRoot(name)
-    }
-    var unionNet = function (name1, name2) {
-        if (name1 == "GND") netNodes[name2][3] = name1;
-        else netNodes[name1][3] = name2;
-        //netNodes[name1][3]=name2;
-    }
-    //console.log("hi:" +nodeName([3,4]))
 
-    var components = [];
-    for (var x in this.symbols) {
-        var symbol = this.symbols[x];
-        var symbolRep = symbol.buildNet(netRecord, unionNet);
-        if (symbolRep) components.push(symbolRep);
-    }
-    /// Get a list of active names
-    var activeNames = {};
-    for (var n in netNodes) {
-        var name = findRoot(n);
-        activeNames[name] = 1;
-    }
-
-    /// now union find lookup
-    for (var item in components) {
-        var nodes = components[item][1]
-        for (var node in nodes) {
-            nodes[node] = findRoot(nodes[node]);
-        }
-    }
-
-    return netNodes;
-}
 SchematicCapture.prototype.draw = function () {
     this.width = $(this.schematicCanvas).width();
     this.height = $(this.schematicCanvas).height();
@@ -525,21 +536,7 @@ SchematicCapture.prototype.draw = function () {
     // draw symbols
     for (var v in this.symbols) {
         var symbol = this.symbols[v];
-        symbol.draxw(xToDevice, yToDevice, context, symbol == this.highlight, symbol);
-    }
-    post.call(this)
-    var net = this.buildNet()
-    context.strokeStyle = "rgba(255,20,20, 1)";
-    for (var n in net) {
-
-        context.beginPath()
-        var data = net[n];
-
-        context.arc(xToDevice(data[0]), yToDevice(data[1]), 4, 0, 2 * Math.PI, true);
-        if (data[2] > 1) context.fill();
-        else {
-            context.stroke();
-        }
+        symbol.draw(xToDevice, yToDevice, context, symbol == this.highlight, symbol);
     }
     
 }
