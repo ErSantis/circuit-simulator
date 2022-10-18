@@ -16,7 +16,7 @@
 }
 
 .componentButton:hover {
-    background: #ff2a00;
+    background: #f824ff;
 }
 
 #topBar {
@@ -27,10 +27,14 @@
 }
 
 .button {
-    background-color: hsl(69, 90%, 84%);
+    background-color: hsl(261, 90%, 84%);
     padding: 5px;
     margin: 3px;
     border-radius: 5px;
+}
+.button:hover {
+    background-color: #b638ff;
+    cursor: pointer;
 }
 
 .editor {
@@ -79,4 +83,19 @@ button {
     border-width: 2px;
     float: right;
     margin-top: 400px;
+}
+#rep{
+    font-size: 14pt;
+    margin-top: 70px;
+    position:absolute;
+    height:400px;width:600px;
+    overflow-y:auto;
+    text-align: left;
+}
+#graph{
+    margin-top: 10px;
+    position:absolute;
+    height:400px;width:600px;
+    overflow-y:auto;
+    text-align: left;
 }

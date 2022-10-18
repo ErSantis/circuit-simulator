@@ -5,12 +5,22 @@
 <head>
 	<script src="../jquery-2.1.1.min.js"></script>
 	<link rel="stylesheet" href="../styles/styles.css">
+	<link rel="stylesheet" href="../styles/style1.css">
 	<script src="circuit.js"></script>
 	<script src="schematicCapture.js"></script>
 </head>
 
 <body>
-	
+	<nav>
+		<ul>
+			<li class="nav-item"><a href="../index.html"">Home</a></li>
+  	  		<li class=" nav-item"><a href='../circuit1/circuit1.html'>Example 1</a></li>
+			<li class="nav-item-"><a href="../circuit2/circuit2.html">Example 2</a></li>
+			<li class="nav-item-"><a href="../circuit3/circuit3.html">Example 3</a></li>
+			<li class="nav-item-active"><a href="../build/index.html">Build</a></li>
+		</ul>
+	</nav>
+
 	<div id="topBar">
 		<b>Circuit</b> | Cap
 	</div>
@@ -31,14 +41,14 @@
 	</div>
 
 	<canvas style='position:absolute' id="schematic"></canvas>
-	<canvas style='position:absolute' id="graph"></canvas>
+	<canvas id="graph"></canvas>
 
 
 	<div style='position:absolute' id="dialog" class="editor">
 		Edit: <input id="editValue" />
 	</div>
 
-	<div id="rep" style='position:absolute;height:400px;width:600px;overflow-y:auto;'>
+	<div id="rep">
 
 		test
 	</div>
