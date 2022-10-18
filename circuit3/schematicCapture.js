@@ -46,6 +46,7 @@ Component.prototype.objectToWorld = function (x, y) {
 
 // Draw a component at a given location
 Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, symbol) {
+    console.log(symbol)
     if (highlight) context.strokeStyle = "#ff8833";
     else context.strokeStyle = "#000000";
     context.beginPath();
@@ -179,70 +180,70 @@ SchematicCapture = function () {
     this.branches = new Array;
 
     // Branch 1
-    this.symbols.push(new ResistorSymbol(-20, -14, 0, 10));
-    this.symbols.push(new VSourceSymbol(-4, -14, 3, 1));
+    this.symbols.push(new ResistorSymbol(-20, -14, 0, 47));
+    this.symbols.push(new VSourceSymbol(-4, -14, 3, 12));
 
     //Push to the branch
-    this.branch.push(this.symbols[0]);
-    this.branch.push(this.symbols[1]);
+    this.branch.push(this.symbols[0].type, this.symbols[0].value);
+    this.branch.push(this.symbols[1].type, this.symbols[1].value);
 
     //Push the branch to the branches
     this.branches.push(this.branch);
 
     // Branch 2
-    this.symbols.push(new ResistorSymbol(-20, -4, 1, 1e3));
+    this.symbols.push(new ResistorSymbol(-20, -4, 1, 100));
 
     //Push to the branch
     this.branch = new Array;
-    this.branch.push(this.symbols[2]);
+    this.branch.push(this.symbols[2].type, this.symbols[2].value);
 
     //Push the branch to the branches
     this.branches.push(this.branch);
 
     // Branch 3
-    this.symbols.push(new ResistorSymbol(-20, -14, 1, 1e3));
-    this.symbols.push(new VSourceSymbol(-4, -24, 3, 1));
+    this.symbols.push(new ResistorSymbol(-20, -14, 1, 10));
+    this.symbols.push(new VSourceSymbol(-4, -24, 3, 9));
 
     //Push to the branch
     this.branch = new Array;
-    this.branch.push(this.symbols[3]);
-    this.branch.push(this.symbols[4]);
+    this.branch.push(this.symbols[3].type, this.symbols[3].value);
+    this.branch.push(this.symbols[4].type, this.symbols[4].value);
 
     //Push the branch to the branches   
     this.branches.push(this.branch);
 
     // Branch 4
-    this.symbols.push(new VSourceSymbol(24, -8, 0, 1));
-    this.symbols.push(new ResistorSymbol(2, 8, 0, 10));
+    this.symbols.push(new VSourceSymbol(24, -8, 0, 10));
+    this.symbols.push(new ResistorSymbol(2, 8, 0, 47));
 
     //Push to the branch
     this.branch = new Array;
-    this.branch.push(this.symbols[5]);
-    this.branch.push(this.symbols[6]);
+    this.branch.push(this.symbols[5].type, this.symbols[5].value);
+    this.branch.push(this.symbols[6].type, this.symbols[6].value);
 
     //Push the branch to the branches
     this.branches.push(this.branch);
 
     // Branch 5
-    this.symbols.push(new ResistorSymbol(2, -4, 1, 10));
-    this.symbols.push(new VSourceSymbol(2, 2, 2, 1));
+    this.symbols.push(new ResistorSymbol(2, -4, 1, 100));
+    this.symbols.push(new VSourceSymbol(2, 2, 2, 7));
 
     //Push to the branch
     this.branch = new Array;
-    this.branch.push(this.symbols[7]);
-    this.branch.push(this.symbols[8]);
+    this.branch.push(this.symbols[7].type, this.symbols[7].value);
+    this.branch.push(this.symbols[8].type, this.symbols[8].value);
 
     //Push the branch to the branches
     this.branches.push(this.branch);
 
     // Branch 6
-    this.symbols.push(new ResistorSymbol(2, -24, 0, 10));
-    this.symbols.push(new ResistorSymbol(24, -14, 1, 10));
+    this.symbols.push(new ResistorSymbol(2, -24, 0, 5));
+    this.symbols.push(new ResistorSymbol(24, -14, 1, 100));
 
     //Push to the branch
     this.branch = new Array;
-    this.branch.push(this.symbols[9]);
-    this.branch.push(this.symbols[10]);
+    this.branch.push(this.symbols[9].type, this.symbols[9].value);
+    this.branch.push(this.symbols[10].type, this.symbols[10].value);
 
     //Push the branch to the branches
     this.branches.push(this.branch);
@@ -252,23 +253,23 @@ SchematicCapture = function () {
 
     //Push to the branch
     this.branch = new Array;
-    this.branch.push(this.symbols[11]);
+    this.branch.push(this.symbols[11].type, this.symbols[11].value);
 
     //Push the branch to the branches
     this.branches.push(this.branch);
 
     // Branch 8
-    this.symbols.push(new ResistorSymbol(-8, 18, 0, 10));
-    this.symbols.push(new ResistorSymbol(14, 18, 0, 10));
-    this.symbols.push(new VSourceSymbol(-14, 18, 1, 1));
-    this.symbols.push(new VSourceSymbol(8, 18, 3, 1));
+    this.symbols.push(new ResistorSymbol(-8, 18, 0, 5));
+    this.symbols.push(new ResistorSymbol(14, 18, 0, 2));
+    this.symbols.push(new VSourceSymbol(-14, 18, 1, 20));
+    this.symbols.push(new VSourceSymbol(8, 18, 3, 15));
 
     //Push to the branch
     this.branch = new Array;
-    this.branch.push(this.symbols[12]);
-    this.branch.push(this.symbols[13]);
-    this.branch.push(this.symbols[14]);
-    this.branch.push(this.symbols[15]);
+    this.branch.push(this.symbols[12].type, this.symbols[12].value);
+    this.branch.push(this.symbols[13].type, this.symbols[13].value);
+    this.branch.push(this.symbols[14].type, this.symbols[14].value);
+    this.branch.push(this.symbols[15].type, this.symbols[15].value);
 
     //Push the branch to the branches
     this.branches.push(this.branch);
@@ -300,6 +301,17 @@ SchematicCapture = function () {
     this.schematicCanvas.addEventListener("mousemove", schematicCaptureMouseMove);
 
     document.addEventListener("keydown", schematicCaptureKeyDown);
+    console.log(this.branches)
+
+}
+function post() {
+    fetch('http://localhost:5501/circuit3', {
+        method: "POST",
+        body: JSON.stringify(this.branches),
+        headers: { "Content-type": "application/json; charset=UTF-8" }
+    })
+        .then(response => response.json())
+        .then(json => console.log(json));
 
 }
 
@@ -513,9 +525,9 @@ SchematicCapture.prototype.draw = function () {
     // draw symbols
     for (var v in this.symbols) {
         var symbol = this.symbols[v];
-        symbol.draw(xToDevice, yToDevice, context, symbol == this.highlight, symbol);
+        symbol.draxw(xToDevice, yToDevice, context, symbol == this.highlight, symbol);
     }
-
+    post.call(this)
     var net = this.buildNet()
     context.strokeStyle = "rgba(255,20,20, 1)";
     for (var n in net) {
@@ -529,5 +541,5 @@ SchematicCapture.prototype.draw = function () {
             context.stroke();
         }
     }
-
+    
 }
