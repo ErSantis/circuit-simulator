@@ -1,2 +1,4 @@
-_pycache_
+# .gitignore
+venv
+__pycache__
 __pycache__/solve.cpython-310.pyc
