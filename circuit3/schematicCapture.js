@@ -200,7 +200,7 @@ function schematicCaptureKeyDown(event) {
  * currents of the circuit and updates the values of the currents in the circuit
  */
 function post() {
-    fetch('http://localhost:5501/circuit3', {
+    fetch('https://geoexpofisica.herokuapp.com/circuit3', {
         method: "POST",
         body: JSON.stringify(this.branches),
         headers: { "Content-type": "application/json; charset=UTF-8" }
