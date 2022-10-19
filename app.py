@@ -9,7 +9,7 @@ CORS(app)
 
 @app.route('/')
 def index():
-    return "Hola bebe"
+    return "Welcome to the Circuit Solver"
 
 
 @app.route('/circuit1', methods=['POST'])
@@ -103,6 +103,3 @@ def circuit3():
     print(intensidades)
 
     return jsonify(intensidades)
-
-if __name__ == '__main__':
-    app.run(debug=True, port=5501)

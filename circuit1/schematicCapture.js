@@ -167,7 +167,7 @@ function schematicCaptureKeyDown(event) {
  * the currents, and then it updates the currents in the symbols array
  */
 function post() {
-    fetch('https://geoexpo-circuit-simulator.herokuapp.com/circuit1', {
+    fetch('https://geoexpofisica.herokuapp.com/circuit1', {
         method: "POST",
         body: JSON.stringify(this.branches),
         headers: { "Content-type": "application/json; charset=UTF-8" }
