@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+body {
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.5vw;
+}
+
+header {
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.5vw;
+	margin: 2vw;
+}
+
+article {
+	display: block;
+	overflow: hidden;
+	margin: 2vw;
+	padding: 4vw;
+	background-color: #dddddd;
+	border-radius: 1vw;
+}
+
+button {
+	font-family: Verdana;
+	font-size: 1.5vw;
+	padding: 2vw;
+	background-color: #8d8d8d;
+	border-radius: 1vw;
+}
+button:hover {
+	background-color: rgb(233, 152, 3);
+	cursor: pointer;
+}
+
+nav ul {
+	list-style-type: none;
+	margin: 2px;
+	padding: 0.7vw;
+	margin-bottom: 2.5px;
+	background-color: #dddddd;
+	border-radius: 1vw;
+	font-family: Verdana;
+	font-size: 1.3vw;
+}
+
+nav li {
+	display: inline;
+	padding: 0.7vw;
+	margin: 0px;
+}
+
+nav li a {
+	padding: 1vw;
+	margin: 0px;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+}
+
+nav li:hover {
+	background-color: rgb(233, 152, 3);
+}
+
+nav li.nav-item-active {
+	background-color: rgb(233, 152, 3);
+}
+
+@media screen and (max-width: 1000px) {
+	body {
+		text-align: center;
+		font-size: 4vw;
+	}
+
+	header {
+		font-size: 3vw;
+		margin-top: 2vw;
+	}
+	nav ul {
+		font-size: 4vw;
+	}
+	nav ul li {
+		display: block;
+		text-align: center;
+		border-radius: 1vw;
+	}
+
+	nav ul li a {
+		display: block;
+	}
+
+}
