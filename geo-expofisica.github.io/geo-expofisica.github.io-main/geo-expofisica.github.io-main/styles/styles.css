@@ -1,0 +1,140 @@
+.components {
+    background: rgb(233, 152, 3);
+    padding: 1px;
+    vertical-align: top;
+}
+
+#config {
+    width: 500px;
+    height: 500px;
+    min-width: 600px;
+    max-height: 800px;
+    left: 600px;
+    position: absolute;
+
+}
+
+:root {
+    --padding-container: 100px 0;
+    --color-title: #001A49;
+}
+
+
+.container{
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: var(--padding-container);
+}
+
+#configdiv {
+    width: 1550px;
+    height: 450px;
+    background-color: #f8ce81;
+    left: 931px;
+    position: absolute;
+    z-index:100;
+
+}
+
+.componentButton {
+    font-size: 10pt;
+    background: rgb(233, 152, 3)f;
+    color: #f8c844;
+    border-radius: 5px 5px 5px 5px;
+    margin: 3px;
+    border: solid;
+    cursor: crosshair;
+    border-width: 2px;
+}
+
+.componentButton:hover {
+    background: #f5f4f5;
+}
+
+#topBar {
+    font-size: 18pt;
+    background-color: black;
+    color: #eeeeee;
+    padding: 5px;
+}
+
+.button {
+    background-color: #eeeeee;
+    padding: 5px;
+    margin: 3px;
+    border-radius: 5px;
+}
+.button:hover {
+    background-color: #59f5f5;
+    cursor: pointer;
+}
+
+.editor {
+    color: white;
+    margin: 5px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: gray;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    display: none;
+}
+
+
+html, body {
+    font-family: Helvetica;
+    height: 100%;
+    margin: 0px;
+    overflow: hidden;
+}
+
+table {
+    padding: 0px;
+    margin: 3px;
+    width: 100%;
+    height: 100%;
+    table-layout: auto;
+}
+
+canvas {
+    position: absolute;
+    width: 80%;
+}
+button {
+    font-size: 30pt;
+    font-family: "Helvetica";
+    background: rgb(233, 152, 3);
+    color: #090909;
+    border-radius: 5px 5px 5px 5px;  
+    margin: 20px;
+    border: solid;
+    cursor: crosshair;
+    border-width: 2px;
+    z-index: 100;
+    position: absolute;
+    left: 1165px;
+    top: 600px;
+
+}
+#rep{
+    font-size: 14pt;
+    margin-top: 70px;
+    position:absolute;
+    height:400px;width:600px;
+    overflow-y:auto;
+    text-align: left;
+}
+#graph{
+    margin-top: 10px;
+    position:absolute;
+    height:400px;width:600px;
+    overflow-y:auto;
+    text-align: left;
+}
+
+
