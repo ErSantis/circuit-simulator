@@ -4,30 +4,74 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expofisica</title>
-    <meta name="description" content="Simulador Kirchoff onnline">
-    <link rel="stylesheet" href="styles/style1.css">
-    <!-- <link rel="icon" type="image/png" href="..\static\images\favicon2.png"/> -->
-  </head>
-  <body>
-  	<header>
-  	  <h1>Simulador Kirchoff</h1>
-  	</header>
-  	<nav>
-  	  <ul>
-  	  	<li class="nav-item-active"><a href="/"">Home</a></li>
-  	  	<li class="nav-item-"><a href='circuit1/circuit1.html'>Example 1</a></li>
-  	  	<li class="nav-item-"><a href="circuit2/circuit2.html">Example 2</a></li>
-        <li class="nav-item-"><a href="circuit3/circuit3.html">Example 3</a></li>
-        <li class="nav-item-"><a href="build/index.html">Build</a></li>
-  	  </ul>
-  	</nav>
-    
-	<article id="indexArticle">
-		<h2>Bienvenido/a</h2>
-		<p>Simulador de ley de kirchoff</p></p>
+    <title>Kirchhof</title>
+    <link rel="stylesheet" href="styles/style2.css">
+    <link rel="stylesheet" href="styles/normalize.css">
+</head>
+<body>
+    <header class="hero">
 
-	</article>
+        <nav class="nav container">
+            <div class = "nav__logo">
+                <h2 class = "nav__title"> Física Eletricidad</h2>
+            </div>
+        </nav>
 
-  </body>
+        <section class = "hero__container container">
+            <h1 class = "hero__title"> LEY DE KIRCHHOFF</h1> 
+            <p class=" hero__paragraph">La ley de Kirchhoff es una ley fundamental de la física que establece que <br>
+                la suma de las corrientes que entran en un nodo es igual a la 
+                suma de las corrientes que salen de él. </p>
+            <a href="docs/index.html" class= "cta">Comienza ahora</a>
+        </section>
+
+    </header>
+
+    <main>
+        <section class="container about">
+            <h2 class="subtitle">¿Qué encontratrás aquí?</h2>
+            <p class="about__text">En esta página encontrarás una explicación de la ley de Kirchhoff, <br>
+                así como ejemplos de su aplicación en la vida cotidiana.
+            </p>
+
+            <div class="about__main">
+                <article class="about__icons">
+                    <img src = "images/info.svg" class="about__icon ">
+                    <h3 class="about__title">Conceptos</h3>
+                    <p class=" "about__paragraph>Infórmate de los conceptos básicos de la ley de Kirchhoff.</p>
+                </article>
+
+                <article class="about__icons">
+                    <img src = "images/details.svg" class="about__icon ">
+                    <h3 class="about__title">Construye</h3>
+                    <p class=" "about__paragraph>Construye ejemplos de aplicación de la ley de Kirchhoff en la vida cotidiana.</p>
+                </article>
+
+                <article class="about__icons">
+                    <img src = "images/c.svg" class="about__icon ">
+                    <h3 class="about__title">Calcula</h3>
+                    <p class=" "about__paragraph>Calcula en base a ejemplos las variables que conforman la ley de Kirchhoff.</p>
+                </article>
+            </div>
+        </section> 
+    </main>
+
+
+    <footer class="footer">
+        <section class="footer__container container">
+            <nav class="nav nav--footer">
+                <h2 class="footer__title">Proyecto Expofísica</h2>
+                <h3 class="footer__subtitle">Física Eletricidad</h3>
+                <h4 class="footer__subtitle">Integrantes: </h4>
+                <ul class = "footer__subtitle">
+                    <li>Elkin Santis</li>
+                    <li>Jason Estrada</li>
+                    <li>Luna Julio</li>
+                    <li>Daniel Sierra</li>
+                  </ul>
+            </nav>
+        </section>
+    </footer>
+
+</body>
 </html>
