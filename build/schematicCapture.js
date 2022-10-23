@@ -504,7 +504,7 @@ SchematicCapture.prototype.draw =  function(){
     context.fillStyle = "rgba(255, 255, 255, 1)";
     context.fillRect(0, 0, this.width, this.height);
     if(true){
-        context.strokeStyle = "rgba(159, 90, 253, 0.3)";
+        context.strokeStyle = "rgb(125, 206, 160)";
         var xstart = Math.floor(this.xmin / this.dx) * this.dx;
         for(var x=xstart;x<this.xmax;x+=this.dx){
             context.moveTo(xToDevice(x),yToDevice(this.ymin));
@@ -520,15 +520,7 @@ SchematicCapture.prototype.draw =  function(){
     context.stroke();
 
     // draw origin
-    if(false){
-        context.strokeStyle = "rgba(50,50,200, 255)";
-        context.beginPath()
-        context.moveTo(xToDevice(this.xmin),yToDevice(0))
-        context.lineTo(xToDevice(this.xmax),yToDevice(0))
-        context.moveTo(xToDevice(0),yToDevice(this.ymin))
-        context.lineTo(xToDevice(0),yToDevice(this.ymax))
-        context.stroke()
-    }
+    
     context.strokeStyle = "rgba(0,0,0, 1)";
     context.lineWidth = 2;
     // draw symbols
