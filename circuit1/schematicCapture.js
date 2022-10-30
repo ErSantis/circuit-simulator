@@ -119,13 +119,21 @@ ResistorSymbol.prototype = new Component()
 
 // Source symbol
 VSourceSymbol = function (x, y, rotation, value) {
+    this.points=[[0,0],[4.5,0],[4.5,-3],[4.5,3],[4.5,0],null,[5.5,0],[5.5,-2],[5.5,2],[5.5,0],[10,0]];
+    Component.call(this, x, y, rotation)
+    this.value = value
+    this.type = "V"
+}
+VSourceSymbol.prototype = new Component()
+
+Ammeter = function (x, y, rotation, value) {
     this.points = [[0, -6], [0, -4], null, [0, 4], [0, 6], null, [0, -4], [0, -2], null, [-1, -3], [1, -3], null, [-1, 3], [1, 3], null, [-1.5, -2], [0, 1.5], [1.5, -2]];
     this.circles = [[0, 0, 4, 2 * Math.PI]]
     Component.call(this, x, y, rotation)
     this.value = value
     this.type = "V"
 }
-VSourceSymbol.prototype = new Component()
+Ammeter.prototype = new Component()
 
 //Wire Symbol
 WireSymbol = function (x, y, x1, y1) {
@@ -232,6 +240,7 @@ SchematicCapture = function () {
     this.branches.push(this.branch);
 
     this.symbols.push(new WireSymbol(-10, 2, 30, 2));
+    
 
     this.button = document.getElementById("button");
     this.schematicCanvas = document.getElementById("schematic")
