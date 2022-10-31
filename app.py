@@ -43,23 +43,22 @@ def circuit2():
     body = request.json
     
     example2 = Circuit()
-    R1=float(body[0][1])
-    V1=float(body[0][3])
+    V1=float(body[0][1])
+    R1=float(body[0][3])
 
-    R2=float(body[1][1])
-    R3=float(body[2][1])
-
-    example2.add_branch((1, 2), R = R1, V = V1)
-    example2.add_branch((1, 2), R = R2, V = 0)
-    example2.add_branch((1, 2), R = R3, V = 0)
+    R2=float(body[0][5])
+    R3=float(body[0][7])
     
-    intensidades = []
-    for branch in example2.branches:
-        print('I',abs(example2._circuit.edges[branch]['I']), 'R', example2._circuit.edges[branch]['R'], 'V', example2._circuit.edges[branch]['V'])
-        intensidades.append(float(abs(example2._circuit.edges[branch]['I'])))
-    print(intensidades)
+    RT=R1+R2+R3
 
-    return jsonify(intensidades)
+    example2.add_branch(("A", "B"), R = RT, V = V1)
+    print(example2)
+        
+    intensidad = V1/RT
+    
+
+
+    return jsonify(intensidad)
 
 
 @app.route('/circuit3', methods=['POST'])
@@ -103,3 +102,6 @@ def circuit3():
     print(intensidades)
 
     return jsonify(intensidades)
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5501)

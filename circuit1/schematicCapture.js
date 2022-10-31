@@ -82,7 +82,7 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
         if(symbol.type == "I"){
             context.font = "14pt comic-sans"
             context.fillStyle = "#ff0000";
-            context.fillText(this.value+"A", xToDevice(pt[0]), yToDevice(pt[1]));
+            context.fillText(this.value+"A", xToDevice(pt[0]-1), yToDevice(pt[1]-4));
         } 
         if (symbol.type == "R")
             context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));

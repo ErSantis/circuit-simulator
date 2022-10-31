@@ -123,8 +123,7 @@ ResistorSymbol.prototype = new Component()
 
 /* Creating a new object called VSourceSymbol. */
 VSourceSymbol = function (x, y, rotation, value) {
-    this.points = [[0, -6], [0, -4], null, [0, 4], [0, 6], null, [0, -4], [0, -2], null, [-1, -3], [1, -3], null, [-1, 3], [1, 3], null, [-1.5, -2], [0, 1.5], [1.5, -2]];
-    this.circles = [[0, 0, 4, 2 * Math.PI]]
+    this.points=[[0,0],[4.5,0],[4.5,-3],[4.5,3],[4.5,0],null,[5.5,0],[5.5,-2],[5.5,2],[5.5,0],[10,0]];      
     Component.call(this, x, y, rotation)
     this.value = value
     this.type = "V"
@@ -181,10 +180,10 @@ SchematicCapture = function () {
     this.branches = new Array;
 
     // Branch 
-    this.symbols.push(new VSourceSymbol(-10, -8, 0, 10));
-    this.symbols.push(new ResistorSymbol(5, -20, 0, 5));
-    this.symbols.push(new ResistorSymbol(30, -3, 1, 10));
-    this.symbols.push(new ResistorSymbol(5, 2, 0, 10));
+    this.symbols.push(new VSourceSymbol(-10, -13, 3, 6));
+    this.symbols.push(new ResistorSymbol(5, -20, 0, 10));
+    this.symbols.push(new ResistorSymbol(30, -3, 1, 5));
+    this.symbols.push(new ResistorSymbol(5, 2, 0, 15));
 
     //Push to the branch
     this.branch = new Array;
@@ -198,8 +197,8 @@ SchematicCapture = function () {
     console.log(this.branches)
 
     // Wires varios
-    this.symbols.push(new WireSymbol(-10, -2, -10, 2, "Undefined"));
-    this.symbols.push(new WireSymbol(-10, -20, -10, -14, "Undefined"));
+    this.symbols.push(new WireSymbol(-10, -3, -10, 2, "Undefined"));
+    this.symbols.push(new WireSymbol(-10, -20, -10, -13, "Undefined"));
     this.symbols.push(new WireSymbol(-10, -20, 5, -20, "Undefined"));
     this.symbols.push(new WireSymbol(21, -20, 30, -20, "Undefined"));
     this.symbols.push(new WireSymbol(30, -20, 30, -13, "Undefined"));
@@ -245,9 +244,8 @@ function post() {
         .then(json => {
             console.log(json)
             const intensidades = this.symbols.filter(symbol => symbol.type == "I");
-
             for (let i = 0; i < intensidades.length; i++) {
-                intensidades[i].value = json[i].toFixed(2);
+                intensidades[i].value = json.toFixed(2);
             }
         });
 }
@@ -286,7 +284,6 @@ function fixEvent(event) {
         event.offsetY = event.pageY - targetOffset.top;
     }
 }
-
 
 /* A function that is called when a key is pressed. */
 SchematicCapture.prototype.keyDown = function (event) {
