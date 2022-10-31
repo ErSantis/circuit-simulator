@@ -269,6 +269,8 @@ SchematicCapture = function () {
     // Branch 1
     this.symbols.push(new ResistorSymbol(-20, -14, 0, 47));
     this.symbols.push(new VSourceSymbol(-4, -14, 3, 12));
+    this.symbols.push(new Ammeter(12, -14, 0));
+    
 
     //Push to the branch
     this.branch.push(this.symbols[0].type, this.symbols[0].value);
@@ -279,6 +281,7 @@ SchematicCapture = function () {
 
     // Branch 2
     this.symbols.push(new ResistorSymbol(-20, -4, 1, 100));
+    this.symbols.push(new Ammeter(-8, 8, 0));
 
     //Push to the branch
     this.branch = new Array;
@@ -290,6 +293,7 @@ SchematicCapture = function () {
     // Branch 3
     this.symbols.push(new ResistorSymbol(-20, -14, 1, 10));
     this.symbols.push(new VSourceSymbol(-4, -24, 3, 9));
+    this.symbols.push(new Ammeter(24, 2, 0));
 
     //Push to the branch
     this.branch = new Array;
@@ -302,6 +306,7 @@ SchematicCapture = function () {
     // Branch 4
     this.symbols.push(new VSourceSymbol(24, -8, 0, 10));
     this.symbols.push(new ResistorSymbol(2, 8, 0, 47));
+    this.symbols.push(new Ammeter(-14, -24, 0));
 
     //Push to the branch
     this.branch = new Array;
@@ -314,6 +319,7 @@ SchematicCapture = function () {
     // Branch 5
     this.symbols.push(new ResistorSymbol(2, -4, 1, 100));
     this.symbols.push(new VSourceSymbol(2, 2, 2, 7));
+    this.symbols.push(new Ammeter(34, 6, 0));
 
     //Push to the branch
     this.branch = new Array;
@@ -326,6 +332,7 @@ SchematicCapture = function () {
     // Branch 6
     this.symbols.push(new ResistorSymbol(2, -24, 0, 5));
     this.symbols.push(new ResistorSymbol(24, -14, 1, 100));
+    this.symbols.push(new Ammeter(15, -24, 0));
 
     //Push to the branch
     this.branch = new Array;
@@ -362,18 +369,23 @@ SchematicCapture = function () {
     this.branches.push(this.branch);
 
     //Wires
-    this.symbols.push(new WireSymbol(-20, -24, -10, -24));
-    this.symbols.push(new WireSymbol(-20, 8, 2, 8));
+    this.symbols.push(new WireSymbol(-20, -24, -17, -24));
+    this.symbols.push(new WireSymbol(-5, 8, 2, 8));
+    this.symbols.push(new WireSymbol(-11, -24, -9, -24));
+    this.symbols.push(new WireSymbol(-11, 8, -20, 8));
     this.symbols.push(new WireSymbol(-20, -4, -20, 8));
-    this.symbols.push(new WireSymbol(12, -24, 24, -24));
-    this.symbols.push(new WireSymbol(2, -14, 24, -14));
-    this.symbols.push(new WireSymbol(24, -2, 24, 8));
+    this.symbols.push(new WireSymbol(24, -24, 18, -24)); //
+    this.symbols.push(new WireSymbol(2, -14, 9, -14));
+    this.symbols.push(new WireSymbol(15, -14, 24, -14));
+    this.symbols.push(new WireSymbol(24, -2, 24, -1));
+    this.symbols.push(new WireSymbol(24, 5, 24, 8));
     this.symbols.push(new WireSymbol(24, 8, 12, 8));
 
     this.symbols.push(new WireSymbol(-30, -14, -20, -14));
     this.symbols.push(new WireSymbol(-30, -14, -30, 18));
     this.symbols.push(new WireSymbol(34, 18, 24, 18));
-    this.symbols.push(new WireSymbol(34, 18, 34, -14));
+    this.symbols.push(new WireSymbol(34, 18, 34, 9));
+    this.symbols.push(new WireSymbol(34, -14, 34, 3));
     this.symbols.push(new WireSymbol(34, -14, 24, -14));
     this.symbols.push(new WireSymbol(-30, 18, -20, 18));
 
@@ -387,7 +399,7 @@ SchematicCapture = function () {
     this.symbols.push(new Intensidad(15, -30, "I7"));
     this.symbols.push(new Intensidad(4, -20, "I8"));
 
-    this.symbols.push(new Ammeter(15,0,0,0))
+    
 
     this.button = document.getElementById("button");
     this.schematicCanvas = document.getElementById("schematic")
