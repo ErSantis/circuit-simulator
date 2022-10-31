@@ -46,7 +46,7 @@ Component.prototype.objectToWorld = function (x, y) {
 
 // Draw a component at a given location
 Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, symbol) {
-    if(symbol.type == "I" && symbol.value != undefined) context.fillStyle = "#ff0000";
+    if (symbol.type == "I" && symbol.value != undefined) context.fillStyle = "#ff0000";
     else if (highlight) context.strokeStyle = "#ff8833";
     else context.strokeStyle = "#000000";
     context.beginPath();
@@ -80,13 +80,13 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
 
         context.font = "10pt sans-serif"
         context.fillStyle = "#000000";
-        if(symbol.type == "I"){
+        if (symbol.type == "I") {
             context.font = "14pt comic-sans"
             context.fillStyle = "#ff0000";
-            context.fillText(this.value+"A", xToDevice(pt[0]-2), yToDevice(pt[1]));
-        } 
+            context.fillText(this.value + "A", xToDevice(pt[0] - 2), yToDevice(pt[1]));
+        }
         else if (symbol.type == "R") {
-            
+
             if (symbol.rotation == 1)
                 context.fillText(this.value + "Ω", xToDevice(pt[0] - 9), yToDevice(pt[1]));
             else
@@ -103,9 +103,9 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
         }
         else if (symbol.type == "I" && symbol.value != "Undefined")
             context.fillText(this.value + "A", xToDevice(pt[0] - 3), yToDevice(pt[1]));
-        
-        else if (symbol.type == "Amp"){
-            context.fillText(this.value , xToDevice(pt[0]-4), yToDevice(pt[1]-3));
+
+        else if (symbol.type == "Amp") {
+            context.fillText(this.value, xToDevice(pt[0] - 4), yToDevice(pt[1] - 3));
         }
 
     }
@@ -269,8 +269,8 @@ SchematicCapture = function () {
     // Branch 1
     this.symbols.push(new ResistorSymbol(-20, -14, 0, 47));
     this.symbols.push(new VSourceSymbol(-4, -14, 3, 12));
-    this.symbols.push(new Ammeter(12, -14, 0));
-    
+
+
 
     //Push to the branch
     this.branch.push(this.symbols[0].type, this.symbols[0].value);
@@ -281,8 +281,6 @@ SchematicCapture = function () {
 
     // Branch 2
     this.symbols.push(new ResistorSymbol(-20, -4, 1, 100));
-    this.symbols.push(new Ammeter(-8, 8, 0));
-
     //Push to the branch
     this.branch = new Array;
     this.branch.push(this.symbols[2].type, this.symbols[2].value);
@@ -293,8 +291,6 @@ SchematicCapture = function () {
     // Branch 3
     this.symbols.push(new ResistorSymbol(-20, -14, 1, 10));
     this.symbols.push(new VSourceSymbol(-4, -24, 3, 9));
-    this.symbols.push(new Ammeter(24, 2, 0));
-
     //Push to the branch
     this.branch = new Array;
     this.branch.push(this.symbols[3].type, this.symbols[3].value);
@@ -306,7 +302,7 @@ SchematicCapture = function () {
     // Branch 4
     this.symbols.push(new VSourceSymbol(24, -8, 0, 10));
     this.symbols.push(new ResistorSymbol(2, 8, 0, 47));
-    this.symbols.push(new Ammeter(-14, -24, 0));
+    ;
 
     //Push to the branch
     this.branch = new Array;
@@ -319,8 +315,6 @@ SchematicCapture = function () {
     // Branch 5
     this.symbols.push(new ResistorSymbol(2, -4, 1, 100));
     this.symbols.push(new VSourceSymbol(2, 2, 2, 7));
-    this.symbols.push(new Ammeter(34, 6, 0));
-
     //Push to the branch
     this.branch = new Array;
     this.branch.push(this.symbols[7].type, this.symbols[7].value);
@@ -332,7 +326,7 @@ SchematicCapture = function () {
     // Branch 6
     this.symbols.push(new ResistorSymbol(2, -24, 0, 5));
     this.symbols.push(new ResistorSymbol(24, -14, 1, 100));
-    this.symbols.push(new Ammeter(15, -24, 0));
+
 
     //Push to the branch
     this.branch = new Array;
@@ -399,7 +393,15 @@ SchematicCapture = function () {
     this.symbols.push(new Intensidad(15, -30, "I7"));
     this.symbols.push(new Intensidad(4, -20, "I8"));
 
-    
+    // Ammeters
+    this.symbols.push(new Ammeter(12, -14, 0));
+    this.symbols.push(new Ammeter(-8, 8, 0));
+    this.symbols.push(new Ammeter(24, 2, 0));
+    this.symbols.push(new Ammeter(-14, -24, 0))
+    this.symbols.push(new Ammeter(34, 6, 0));
+    this.symbols.push(new Ammeter(15, -24, 0));
+
+
 
     this.button = document.getElementById("button");
     this.schematicCanvas = document.getElementById("schematic")
@@ -563,5 +565,5 @@ SchematicCapture.prototype.draw = function () {
         var symbol = this.symbols[v];
         symbol.draw(xToDevice, yToDevice, context, symbol == this.highlight, symbol);
     }
-    
+
 }
