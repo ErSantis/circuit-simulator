@@ -235,7 +235,7 @@ SchematicCapture = function () {
  * and updates the circuit's symbols
  */
 function post() {
-    fetch('http://localhost:5501/circuit2', {
+    fetch('https://geoexpofisica.herokuapp.com/circuit2', {
         method: "POST",
         body: JSON.stringify(this.branches),
         headers: { "Content-type": "application/json; charset=UTF-8" }
