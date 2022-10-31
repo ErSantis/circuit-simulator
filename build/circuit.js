@@ -457,6 +457,5 @@ Circuit.prototype.transient=function(timeDuration,dt,nodeNamesToCollect){
 		time+=dt;
 		idx+=1;
 	}
-	console.log(solutionVariables)
 	return solutionVariables;
 };

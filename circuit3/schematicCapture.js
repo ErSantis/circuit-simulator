@@ -81,7 +81,7 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
         context.font = "10pt sans-serif"
         context.fillStyle = "#000000";
         if(symbol.type == "I"){
-            context.font = "14pt sans-serif"
+            context.font = "14pt comic-sans"
             context.fillStyle = "#ff0000";
             context.fillText(this.value+"A", xToDevice(pt[0]-2), yToDevice(pt[1]));
         } 
