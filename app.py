@@ -102,6 +102,3 @@ def circuit3():
     print(intensidades)
 
     return jsonify(intensidades)
-
-if __name__ == '__main__':
-    app.run(debug=True, port=5501)
