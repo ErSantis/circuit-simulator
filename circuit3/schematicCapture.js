@@ -103,6 +103,10 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
         }
         else if (symbol.type == "I" && symbol.value != "Undefined")
             context.fillText(this.value + "A", xToDevice(pt[0] - 3), yToDevice(pt[1]));
+        
+        else if (symbol.type == "Amp"){
+            context.fillText(this.value , xToDevice(pt[0]-4), yToDevice(pt[1]-3));
+        }
 
     }
 }
@@ -154,6 +158,13 @@ VSourceSymbol = function (x, y, rotation, value) {
 }
 VSourceSymbol.prototype = new Component()
 
+Ammeter = function (x, y, rotation) {
+    this.circles = [[0, 0, 3, 2 * Math.PI]]
+    Component.call(this, x, y, rotation)
+    this.value = "A"
+    this.type = "Amp"
+}
+Ammeter.prototype = new Component()
 /* Creating a new object called WireSymbol. */
 WireSymbol = function (x, y, x1, y1) {
     this.points = [[0, 0], [x1 - x, y1 - y]];
@@ -375,6 +386,8 @@ SchematicCapture = function () {
     this.symbols.push(new Intensidad(4, -6, "I6"));
     this.symbols.push(new Intensidad(15, -30, "I7"));
     this.symbols.push(new Intensidad(4, -20, "I8"));
+
+    this.symbols.push(new Ammeter(15,0,0,0))
 
     this.button = document.getElementById("button");
     this.schematicCanvas = document.getElementById("schematic")

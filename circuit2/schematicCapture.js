@@ -79,7 +79,7 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
 
     if (this.value) {
         if (symbol.type == "I") {
-            context.font = "14pt sans-serif"
+            context.font = "14pt comic-sans"
             context.fillStyle = "#ff0000";
             context.fillText(this.value + "A", xToDevice(pt[0] - 2), yToDevice(pt[1]));
         }
@@ -89,6 +89,8 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
             context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
         else if (symbol.type == "V")
             context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]));
+        else if (symbol.type == "Amp")
+            context.fillText(this.value, xToDevice(pt[0] - 4), yToDevice(pt[1] - 3));
     }
 }
 
@@ -129,6 +131,13 @@ VSourceSymbol = function (x, y, rotation, value) {
 }
 VSourceSymbol.prototype = new Component()
 
+Ammeter = function (x, y, rotation) {
+    this.circles = [[0, 0, 3, 2 * Math.PI]]
+    Component.call(this, x, y, rotation)
+    this.value = "A"
+    this.type = "Amp"
+}
+Ammeter.prototype = new Component()
 /* Creating a new object called WireSymbol. */
 WireSymbol = function (x, y, x1, y1, value) {
     this.points = [[0, 0], [x1 - x, y1 - y]];
@@ -171,53 +180,40 @@ SchematicCapture = function () {
     this.branch = new Array;
     this.branches = new Array;
 
-    // Branch 1
-    this.symbols.push(new ResistorSymbol(-10, -10, 1, 2));
-    this.symbols.push(new VSourceSymbol(-10, -4, 0, 10));
-    this.symbols.push(new Intensidad(-22, -15, "I1"));
-
-
-    //Push to the branch
-    this.branch.push(this.symbols[0].type, this.symbols[0].value);
-    this.branch.push(this.symbols[1].type, this.symbols[1].value);
-
-    //Push the branch to the branches
-    this.branches.push(this.branch);
-
-    // Branch 2
-    this.symbols.push(new ResistorSymbol(10, -10, 1, 5));
-    this.symbols.push(new Intensidad(10, -10, "I2"));
+    // Branch 
+    this.symbols.push(new VSourceSymbol(-10, -8, 0, 10));
+    this.symbols.push(new ResistorSymbol(5, -20, 0, 5));
+    this.symbols.push(new ResistorSymbol(30, -3, 1, 10));
+    this.symbols.push(new ResistorSymbol(5, 2, 0, 10));
 
     //Push to the branch
     this.branch = new Array;
+    this.branch.push(this.symbols[0].type, this.symbols[0].value);
+    this.branch.push(this.symbols[1].type, this.symbols[1].value);
+    this.branch.push(this.symbols[2].type, this.symbols[2].value);
     this.branch.push(this.symbols[3].type, this.symbols[3].value);
 
     //Push the branch to the branches
     this.branches.push(this.branch);
-
-    // Branch 3
-    this.symbols.push(new ResistorSymbol(30, -10, 1, 10));
-    this.symbols.push(new Intensidad(30, -10, "I3"));
-
-    //Push to the branch
-    this.branch = new Array;
-    this.branch.push(this.symbols[5].type, this.symbols[5].value);
-
-    //Push the branch to the branches
-    this.branches.push(this.branch);
+    console.log(this.branches)
 
     // Wires varios
-    this.symbols.push(new WireSymbol(10, -10, 10, 2, "Undefined"));
-    this.symbols.push(new WireSymbol(30, -10, 30, 2, "Undefined"));
-    this.symbols.push(new WireSymbol(-10, 2, 30, 2, "Undefined"));
-    this.symbols.push(new WireSymbol(-10, -20, 10, -20, "Undefined"));
-    this.symbols.push(new WireSymbol(10, -20, 30, -20, "Undefined"));
+    this.symbols.push(new WireSymbol(-10, -2, -10, 2, "Undefined"));
+    this.symbols.push(new WireSymbol(-10, -20, -10, -14, "Undefined"));
+    this.symbols.push(new WireSymbol(-10, -20, 5, -20, "Undefined"));
+    this.symbols.push(new WireSymbol(21, -20, 30, -20, "Undefined"));
+    this.symbols.push(new WireSymbol(30, -20, 30, -13, "Undefined"));
+    this.symbols.push(new Ammeter(30, 0, 0));
+    this.symbols.push(new WireSymbol(15, 2, 28, 2, "Undefined"));
+    this.symbols.push(new Ammeter(2, 2, 0));
+    this.symbols.push(new WireSymbol(-1, 2, -10, 2, "Undefined"));
 
-    //Wires to make a arrow
-    this.symbols.push(new WireSymbol(12, -4, 12, 0, "I2"));
-    this.symbols.push(new WireSymbol(11, -4, 13, -4, "Undefined"));
-    this.symbols.push(new WireSymbol(11, -4, 12, -6, "Undefined"));
-    this.symbols.push(new WireSymbol(13, -4, 12, -6, "Undefined"));
+    //Draw intensidades
+    this.symbols.push(new Intensidad(14, -27, "I1"));
+    this.symbols.push(new Ammeter(18, -20, 0));
+    this.symbols.push(new Intensidad(32, -2, "I2"));
+    this.symbols.push(new Intensidad(-1, 5, "I3"));
+
 
     this.button = document.getElementById("button");
     this.schematicCanvas = document.getElementById("schematic")
@@ -227,6 +223,7 @@ SchematicCapture = function () {
     this.schematicCanvas.addEventListener("mouseup", schematicCaptureMouseUp);
     this.schematicCanvas.addEventListener("mousemove", schematicCaptureMouseMove);
     this.button.addEventListener("click", () => {
+
         updateBranches.call(this);
         post.call(this)
     });
@@ -239,7 +236,7 @@ SchematicCapture = function () {
  * and updates the circuit's symbols
  */
 function post() {
-    fetch('https://geoexpofisica.herokuapp.com/circuit2', {
+    fetch('http://localhost:5501/circuit2', {
         method: "POST",
         body: JSON.stringify(this.branches),
         headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -261,13 +258,9 @@ function updateBranches() {
 
     this.branches[0] = [
         this.symbols[0].type, this.symbols[0].value,
-        this.symbols[1].type, this.symbols[1].value]
-
-    this.branches[1] = [
+        this.symbols[1].type, this.symbols[1].value,
+        this.symbols[2].type, this.symbols[2].value,
         this.symbols[3].type, this.symbols[3].value]
-
-    this.branches[2] = [
-        this.symbols[5].type, this.symbols[5].value]
 }
 
 SchematicCapture.prototype.deviceToWorldX = function (xDevice) {
