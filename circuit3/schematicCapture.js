@@ -88,16 +88,20 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
         else if (symbol.type == "R") {
 
             if (symbol.rotation == 1)
-                context.fillText(this.value + "Ω", xToDevice(pt[0] - 9), yToDevice(pt[1]));
+                context.fillText(this.value + "Ω", xToDevice(pt[0] - 2      ), yToDevice(pt[1]));
             else
                 context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
         }
 
         else if (symbol.type == "V") {
             if (this.rotation == 3) {
-                context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1] + 2));
-            } else {
-                context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]));
+                context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]+4));
+            
+            } 
+            else if(this.rotation ==0){
+                context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1])+5);
+            }else {
+                context.fillText(this.value + "V", xToDevice(pt[0]  ), yToDevice(pt[1]));
             }
 
         }
@@ -150,8 +154,7 @@ ResistorSymbol.prototype = new Component()
 
 /* Creating a new object called VSourceSymbol. */
 VSourceSymbol = function (x, y, rotation, value) {
-    this.points = [[0, -6], [0, -4], null, [0, 4], [0, 6], null, [0, -4], [0, -2], null, [-1, -3], [1, -3], null, [-1, 3], [1, 3], null, [-1.5, -2], [0, 1.5], [1.5, -2]];
-    this.circles = [[0, 0, 4, 2 * Math.PI]]
+    this.points=[[0,0],[4.5,0],[4.5,-3],[4.5,3],[4.5,0],null,[5.5,0],[5.5,-2],[5.5,2],[5.5,0],[12,0]];
     Component.call(this, x, y, rotation)
     this.value = value
     this.type = "V"
@@ -268,7 +271,7 @@ SchematicCapture = function () {
 
     // Branch 1
     this.symbols.push(new ResistorSymbol(-20, -14, 0, 47));
-    this.symbols.push(new VSourceSymbol(-4, -14, 3, 12));
+    this.symbols.push(new VSourceSymbol(2, -14, 2, 12));
 
 
 
@@ -290,7 +293,7 @@ SchematicCapture = function () {
 
     // Branch 3
     this.symbols.push(new ResistorSymbol(-20, -14, 1, 10));
-    this.symbols.push(new VSourceSymbol(-4, -24, 3, 9));
+    this.symbols.push(new VSourceSymbol(2, -24, 2, 9));
     //Push to the branch
     this.branch = new Array;
     this.branch.push(this.symbols[3].type, this.symbols[3].value);
@@ -300,9 +303,9 @@ SchematicCapture = function () {
     this.branches.push(this.branch);
 
     // Branch 4
-    this.symbols.push(new VSourceSymbol(24, -8, 0, 10));
+    this.symbols.push(new VSourceSymbol(24, -14 , 3, 10));
     this.symbols.push(new ResistorSymbol(2, 8, 0, 47));
-    ;
+    
 
     //Push to the branch
     this.branch = new Array;
@@ -314,7 +317,7 @@ SchematicCapture = function () {
 
     // Branch 5
     this.symbols.push(new ResistorSymbol(2, -4, 1, 100));
-    this.symbols.push(new VSourceSymbol(2, 2, 2, 7));
+    this.symbols.push(new VSourceSymbol(2, 8, 1, 7));
     //Push to the branch
     this.branch = new Array;
     this.branch.push(this.symbols[7].type, this.symbols[7].value);
@@ -349,8 +352,8 @@ SchematicCapture = function () {
     // Branch 8
     this.symbols.push(new ResistorSymbol(-8, 18, 0, 5));
     this.symbols.push(new ResistorSymbol(14, 18, 0, 2));
-    this.symbols.push(new VSourceSymbol(-14, 18, 1, 20));
-    this.symbols.push(new VSourceSymbol(8, 18, 3, 15));
+    this.symbols.push(new VSourceSymbol(-20, 18, 0, 20));
+    this.symbols.push(new VSourceSymbol(14, 18, 2, 15));
 
     //Push to the branch
     this.branch = new Array;
@@ -384,14 +387,14 @@ SchematicCapture = function () {
     this.symbols.push(new WireSymbol(-30, 18, -20, 18));
 
     //Intensidades
-    this.symbols.push(new Intensidad(-17, -20, "I1"));
-    this.symbols.push(new Intensidad(-39, 0, "I2"));
-    this.symbols.push(new Intensidad(-20, 0, "I3"));
-    this.symbols.push(new Intensidad(-16, -30, "I4"));
-    this.symbols.push(new Intensidad(15, 4, "I5"));
+    this.symbols.push(new Intensidad(-15, -20, "I1"));
+    this.symbols.push(new Intensidad(37, 3, "I2"));
+    this.symbols.push(new Intensidad(-10, 0, "I3"));
+    this.symbols.push(new Intensidad(-17, -32, "I4"));
+    this.symbols.push(new Intensidad(15, 0, "I5"));
     this.symbols.push(new Intensidad(4, -6, "I6"));
-    this.symbols.push(new Intensidad(15, -30, "I7"));
-    this.symbols.push(new Intensidad(4, -20, "I8"));
+    this.symbols.push(new Intensidad(12 , -32 , "I7"));
+    this.symbols.push(new Intensidad(8, -21 , "I8"));
 
     // Ammeters
     this.symbols.push(new Ammeter(12, -14, 0));
