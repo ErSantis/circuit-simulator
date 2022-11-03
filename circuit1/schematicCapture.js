@@ -77,19 +77,26 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
     // draw a label for the value of the component
     var pt = this.objectToWorld(3.5, 3.5);
     if (this.value) {
+        /* Setting the font to 10 point sans-serif. */
         context.font = "10pt sans-serif"
         context.fillStyle = "#000000";
-        if(symbol.type == "I"){
+        if (symbol.type == "I") {
             context.font = "14pt comic-sans"
             context.fillStyle = "#ff0000";
-            context.fillText(this.value+"A", xToDevice(pt[0]-1), yToDevice(pt[1]-4));
-        } 
-        if (symbol.type == "R")
+            context.fillText(this.value + "A", xToDevice(pt[0] - 1), yToDevice(pt[1] - 4));
+        }
+        if (symbol.type == "R") {
+            context.font = "10pt sans-serif";
             context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
+            context.font = "14pt comic-sans";
+            context.fillStyle = "rgba(255, 102, 0)";
+            context.fillText(this.voltage + "V", xToDevice(pt[0] - 11), yToDevice(pt[1]));
+        }
+
         else if (symbol.type == "V")
             context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]));
         else if (symbol.type == "Amp")
-            context.fillText(this.value, xToDevice(pt[0]-4), yToDevice(pt[1]-2.5));
+            context.fillText(this.value, xToDevice(pt[0] - 4), yToDevice(pt[1] - 2.5));
     }
 }
 
@@ -112,6 +119,7 @@ ResistorSymbol = function (x, y, rotation, value) {
     this.points = [[0, 0], [2, 0], [2.5, -1], [3.5, 1], [4.5, -1], [5.5, 1], [6.5, -1], [7.5, 1], [8, 0], [10, 0]]
     Component.call(this, x, y, rotation)
     this.value = value
+    this.voltage = ""
     this.type = "R"
 
 }
@@ -120,7 +128,7 @@ ResistorSymbol.prototype = new Component()
 
 // Source symbol
 VSourceSymbol = function (x, y, rotation, value) {
-    this.points=[[0,0],[4.5,0],[4.5,-3],[4.5,3],[4.5,0],null,[5.5,0],[5.5,-2],[5.5,2],[5.5,0],[10,0]];
+    this.points = [[0, 0], [4.5, 0], [4.5, -3], [4.5, 3], [4.5, 0], null, [5.5, 0], [5.5, -2], [5.5, 2], [5.5, 0], [10, 0]];
     Component.call(this, x, y, rotation)
     this.value = value
     this.type = "V"
@@ -184,9 +192,10 @@ function post() {
         .then(json => {
             console.log(json)
             const intensidades = this.symbols.filter(symbol => symbol.type == "I");
-
+            const resistores = this.symbols.filter(symbol => symbol.type == "R");
             for (let i = 0; i < intensidades.length; i++) {
                 intensidades[i].value = json[i].toFixed(2);
+                resistores[i].voltage = (resistores[i].value*intensidades[i].value).toFixed(2);
             }
         });
 }
@@ -200,7 +209,7 @@ SchematicCapture = function () {
     // Branch 1, Create symbols
     this.symbols.push(new ResistorSymbol(-10, -14, 1, 3));
     this.symbols.push(new VSourceSymbol(-10, -8, 3, 10));
-    this.symbols.push(new Intensidad(-20, -12, "I1"));
+    this.symbols.push(new Intensidad(-22, -12, "I1"));
 
     //Push to the branch
     this.branch.push(this.symbols[0].type, this.symbols[0].value);
@@ -240,11 +249,11 @@ SchematicCapture = function () {
     this.branches.push(this.branch);
 
     this.symbols.push(new WireSymbol(-10, 2, 30, 2));
-    this.symbols.push(new Ammeter(-10,-11,0));
-    this.symbols.push(new Ammeter(10,-11,0));
-    this.symbols.push(new Ammeter(30,-11,0));
-    
-    
+    this.symbols.push(new Ammeter(-10, -11, 0));
+    this.symbols.push(new Ammeter(10, -11, 0));
+    this.symbols.push(new Ammeter(30, -11, 0));
+
+
 
     this.button = document.getElementById("button");
     this.schematicCanvas = document.getElementById("schematic")
@@ -257,7 +266,7 @@ SchematicCapture = function () {
     this.button.addEventListener('click', () => {
         updateBranches.call(this)
         post.call(this);
-    
+
     });
 
 }
@@ -274,7 +283,7 @@ function updateBranches() {
         this.symbols[5].type, this.symbols[5].value]
     this.branches[2] = [
         this.symbols[8].type, this.symbols[8].value,
-        this.symbols[9].type, this.symbols[9].value]    
+        this.symbols[9].type, this.symbols[9].value]
 }
 
 SchematicCapture.prototype.deviceToWorldX = function (xDevice) {
@@ -389,11 +398,11 @@ SchematicCapture.prototype.draw = function () {
     this.ymin = -50;
     this.ymax = (this.xmax - this.xmin) / this.width * this.height + this.ymin
     this.dx = 2;
-    
+
     var schem = this.schematicCanvas;
     schem.width = schem.width;
     var context = schem.getContext("2d");
-    
+
     var self = this; // bind to outer scope
     var xToDevice = function (x) { return (x - self.xmin) / (self.xmax - self.xmin) * self.width };
     var yToDevice = function (y) { return (y - self.ymin) / (self.ymax - self.ymin) * self.height };
