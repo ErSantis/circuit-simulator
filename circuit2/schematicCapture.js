@@ -78,6 +78,7 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
     var pt = this.objectToWorld(3.5, 3.5);
 
     if (this.value) {
+
         if (symbol.type == "I") {
             context.font = "14pt comic-sans"
             context.fillStyle = "#ff0000";
@@ -85,8 +86,18 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
         }
         context.font = "10pt sans-serif"
         context.fillStyle = "#000000";
-        if (symbol.type == "R")
+        if (symbol.type == "R") {
+            //context.font = "10pt sans-serif";
             context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
+            context.font = "14pt comic-sans";
+            context.fillStyle = "rgba(255, 102, 0)";
+            if (symbol.rotation == 1) {
+                context.fillText(this.voltage + "V", xToDevice(pt[0] - 11), yToDevice(pt[1]));
+            }
+            else {
+                context.fillText(this.voltage + "V", xToDevice(pt[0]), yToDevice(pt[1] - 5));
+            }
+        }
         else if (symbol.type == "V")
             context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]));
         else if (symbol.type == "Amp")
@@ -116,6 +127,7 @@ ResistorSymbol = function (x, y, rotation, value) {
     this.points = [[0, 0], [2, 0], [2.5, -1], [3.5, 1], [4.5, -1], [5.5, 1], [6.5, -1], [7.5, 1], [8, 0], [10, 0]]
     Component.call(this, x, y, rotation)
     this.value = value
+    this.voltage = ""
     this.type = "R"
 
 }
@@ -123,7 +135,7 @@ ResistorSymbol.prototype = new Component()
 
 /* Creating a new object called VSourceSymbol. */
 VSourceSymbol = function (x, y, rotation, value) {
-    this.points=[[0,0],[4.5,0],[4.5,-3],[4.5,3],[4.5,0],null,[5.5,0],[5.5,-2],[5.5,2],[5.5,0],[10,0]];      
+    this.points = [[0, 0], [4.5, 0], [4.5, -3], [4.5, 3], [4.5, 0], null, [5.5, 0], [5.5, -2], [5.5, 2], [5.5, 0], [10, 0]];
     Component.call(this, x, y, rotation)
     this.value = value
     this.type = "V"
@@ -244,8 +256,10 @@ function post() {
         .then(json => {
             console.log(json)
             const intensidades = this.symbols.filter(symbol => symbol.type == "I");
+            const resistores = this.symbols.filter(symbol => symbol.type == "R");
             for (let i = 0; i < intensidades.length; i++) {
                 intensidades[i].value = json.toFixed(2);
+                resistores[i].voltage = (intensidades[i].value * resistores[i].value).toFixed(2)
             }
         });
 }

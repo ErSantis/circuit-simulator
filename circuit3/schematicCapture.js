@@ -87,21 +87,32 @@ Component.prototype.draw = function (xToDevice, yToDevice, context, highlight, s
         }
         else if (symbol.type == "R") {
 
-            if (symbol.rotation == 1)
-                context.fillText(this.value + "Ω", xToDevice(pt[0] - 2      ), yToDevice(pt[1]));
-            else
+            if (symbol.rotation == 1) {
+                context.fillText(this.value + "Ω", xToDevice(pt[0] - 9), yToDevice(pt[1]))
+                context.font = "14pt comic-sans";
+                context.fillStyle = "rgba(255, 102, 0)";
+                context.fillText(this.voltage + "V", xToDevice(pt[0]-2), yToDevice(pt[1]));
+            }
+            else {
                 context.fillText(this.value + "Ω", xToDevice(pt[0]), yToDevice(pt[1]));
+                context.font = "14pt comic-sans";
+                context.fillStyle = "rgba(255, 102, 0)";
+                context.fillText(this.voltage + "V", xToDevice(pt[0]), yToDevice(pt[1] - 5));
+            }
+
         }
 
         else if (symbol.type == "V") {
             if (this.rotation == 3) {
-                context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]+4));
-            
-            } 
-            else if(this.rotation ==0){
-                context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1])+5);
-            }else {
-                context.fillText(this.value + "V", xToDevice(pt[0]  ), yToDevice(pt[1]));
+                context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1] + 5));
+            }
+            else if (this.rotation == 2) {
+                context.fillText(this.value + "V", xToDevice(pt[0] - 6), yToDevice(pt[1]));
+            }
+            else if (this.rotation == 0) {
+                context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1]) + 5);
+            } else {
+                context.fillText(this.value + "V", xToDevice(pt[0]), yToDevice(pt[1] - 2));
             }
 
         }
@@ -146,6 +157,7 @@ ResistorSymbol = function (x, y, rotation, value) {
     this.points = [[0, 0], [2, 0], [2.5, -1], [3.5, 1], [4.5, -1], [5.5, 1], [6.5, -1], [7.5, 1], [8, 0], [10, 0]]
     Component.call(this, x, y, rotation)
     this.value = value
+    this.voltage = ''
     this.type = "R"
 
 }
@@ -154,7 +166,7 @@ ResistorSymbol.prototype = new Component()
 
 /* Creating a new object called VSourceSymbol. */
 VSourceSymbol = function (x, y, rotation, value) {
-    this.points=[[0,0],[4.5,0],[4.5,-3],[4.5,3],[4.5,0],null,[5.5,0],[5.5,-2],[5.5,2],[5.5,0],[12,0]];
+    this.points = [[0, 0], [4.5, 0], [4.5, -3], [4.5, 3], [4.5, 0], null, [5.5, 0], [5.5, -2], [5.5, 2], [5.5, 0], [12, 0]];
     Component.call(this, x, y, rotation)
     this.value = value
     this.type = "V"
@@ -223,13 +235,25 @@ function post() {
         .then(json => {
             console.log(json)
             const intensidades = this.symbols.filter(symbol => symbol.type == "I");
-
+            const resistores = this.symbols.filter(symbol => symbol.type == "R");
+            for (let i = 0; i < resistores.length;i++){
+            }
             for (let i = 0; i < intensidades.length; i++) {
                 intensidades[i].value = json[i].toFixed(2);
             }
+            resistores[0].voltage = intensidades[0].value*resistores[0].value;
+            resistores[1].voltage = intensidades[2].value* resistores[1].value;
+            resistores[2].voltage = (intensidades[3].value* resistores[2].value).toFixed(2);
+            resistores[3].voltage = (intensidades[4].value* resistores[3].value).toFixed(2);
+            resistores[4].voltage = (intensidades[5].value* resistores[4].value).toFixed(2);
+            resistores[5].voltage = (intensidades[6].value* resistores[5].value).toFixed(2);
+            resistores[6].voltage = (intensidades[6].value* resistores[6].value).toFixed(2);
+            resistores[7].voltage = (intensidades[7].value* resistores[7].value).toFixed(2);
+            resistores[8].voltage = (intensidades[1].value* resistores[8].value).toFixed(2);
+            resistores[9].voltage = (intensidades[1].value* resistores[9].value).toFixed(2);
         });
-
 }
+
 /* Updating the branches of the tree. */
 function updateBranches() {
 
@@ -282,6 +306,8 @@ SchematicCapture = function () {
     //Push the branch to the branches
     this.branches.push(this.branch);
 
+
+
     // Branch 2
     this.symbols.push(new ResistorSymbol(-20, -4, 1, 100));
     //Push to the branch
@@ -303,9 +329,9 @@ SchematicCapture = function () {
     this.branches.push(this.branch);
 
     // Branch 4
-    this.symbols.push(new VSourceSymbol(24, -14 , 3, 10));
+    this.symbols.push(new VSourceSymbol(24, -14, 3, 10));
     this.symbols.push(new ResistorSymbol(2, 8, 0, 47));
-    
+
 
     //Push to the branch
     this.branch = new Array;
@@ -387,14 +413,14 @@ SchematicCapture = function () {
     this.symbols.push(new WireSymbol(-30, 18, -20, 18));
 
     //Intensidades
-    this.symbols.push(new Intensidad(-15, -20, "I1"));
+    this.symbols.push(new Intensidad(-12, -15, "I1"));
     this.symbols.push(new Intensidad(37, 3, "I2"));
     this.symbols.push(new Intensidad(-10, 0, "I3"));
     this.symbols.push(new Intensidad(-17, -32, "I4"));
-    this.symbols.push(new Intensidad(15, 0, "I5"));
+    this.symbols.push(new Intensidad(13, 0, "I5"));
     this.symbols.push(new Intensidad(4, -6, "I6"));
-    this.symbols.push(new Intensidad(12 , -32 , "I7"));
-    this.symbols.push(new Intensidad(8, -21 , "I8"));
+    this.symbols.push(new Intensidad(12, -32, "I7"));
+    this.symbols.push(new Intensidad(10, -21, "I8"));
 
     // Ammeters
     this.symbols.push(new Ammeter(12, -14, 0));
@@ -416,7 +442,6 @@ SchematicCapture = function () {
     this.button.addEventListener('click', () => {
         updateBranches.call(this)
         post.call(this);
-
     });
 
     document.addEventListener("keydown", schematicCaptureKeyDown);
