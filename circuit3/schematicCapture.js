@@ -241,8 +241,8 @@ function post() {
             for (let i = 0; i < intensidades.length; i++) {
                 intensidades[i].value = json[i].toFixed(2);
             }
-            resistores[0].voltage = intensidades[0].value*resistores[0].value;
-            resistores[1].voltage = intensidades[2].value* resistores[1].value;
+            resistores[0].voltage = (intensidades[0].value*resistores[0].value).toFixed(2);
+            resistores[1].voltage = (intensidades[2].value* resistores[1].value).toFixed(2);
             resistores[2].voltage = (intensidades[3].value* resistores[2].value).toFixed(2);
             resistores[3].voltage = (intensidades[4].value* resistores[3].value).toFixed(2);
             resistores[4].voltage = (intensidades[5].value* resistores[4].value).toFixed(2);
